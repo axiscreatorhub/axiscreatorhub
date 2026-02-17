@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 const AboutUs: React.FC = () => {
   const values = [
     {
       title: "Precision Performance",
-      desc: "In an era of high-speed trends, Faceless Digital Life prioritizes world-class results. Our tools help you grow sustainably.",
+      desc: "In an era of high-speed trends, AXIS Creator Hub prioritizes world-class results. Our tools help you grow sustainably.",
       icon: "✨"
     },
     {
@@ -33,10 +32,10 @@ const AboutUs: React.FC = () => {
               Our Core Manifesto
             </div>
             <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-8 leading-[1.1] tracking-tight">
-              Faceless Digital Life: <br/><span className="text-transparent bg-clip-text meta-gradient italic serif">The Creator</span> Experience.
+              AXIS Creator Hub: <br/><span className="text-transparent bg-clip-text meta-gradient italic serif">The Creator</span> Experience.
             </h2>
             <p className="text-lg text-slate-500 font-medium leading-relaxed mb-10 max-w-xl">
-              Faceless Digital Life was born from a realization: world-class marketing tools should be accessible to all focused creators. We've built the definitive unified hub to empower influencers with an integrated AI toolset.
+              AXIS was born from a realization: world-class marketing tools should be accessible to all focused creators. We've built the definitive unified hub to empower influencers with an integrated Google AI toolset.
             </p>
             
             <div className="space-y-10">

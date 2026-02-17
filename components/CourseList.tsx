@@ -52,19 +52,28 @@ interface CourseListProps {
 const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
   const payWithPaystack = (course: Course) => {
     // @ts-ignore
+    if (!window.PaystackPop) {
+      alert("AXIS Gateway Error: Secure payment script not initialized. Please refresh.");
+      return;
+    }
+
+    const priceNum = parseFloat(course.price.replace('$', '').replace('/mo', ''));
+    
+    // @ts-ignore
     const handler = PaystackPop.setup({
-      key: 'pk_live_your_actual_key_here', // In production, this should come from env: process.env.PAYSTACK_PUBLIC_KEY
-      email: 'customer@axiscreatorhub.com',
-      amount: parseFloat(course.price.replace('$', '').replace('/mo', '')) * 100 * 1500, // Conversion if needed, or flat rate
-      currency: 'NGN', // Paystack default, can be USD if account supports it
-      ref: 'AXIS-' + Math.floor((Math.random() * 1000000000) + 1),
+      // Ensure PAYSTACK_PUBLIC_KEY is set in Vercel Environment Variables
+      key: process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder', 
+      email: 'billing@axiscreatorhub.com',
+      amount: Math.round(priceNum * 100), // Paystack expects minor units (cents/kobo)
+      currency: 'USD',
+      ref: 'AXIS-SYNC-' + Math.floor((Math.random() * 10000000) + 1),
       callback: (response: any) => {
-        alert('Payment successful. Transaction reference: ' + response.reference);
         if (onUpgrade) onUpgrade();
+        alert('Node Activation Successful. Reference: ' + response.reference);
         window.location.href = '#hub';
       },
       onClose: () => {
-        alert('Transaction cancelled. Your AXIS Node remains in trial mode.');
+        console.log('AXIS Activation Deferred.');
       }
     });
     handler.openIframe();
@@ -75,14 +84,13 @@ const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
       window.location.href = '#hub';
       return;
     }
-    
     payWithPaystack(course);
   };
 
   return (
     <section id="trial" className="py-48 bg-[#020617] relative">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <div className="text-violet-400 font-black text-[12px] uppercase tracking-[0.6em] mb-8">Synchronize Operating Node</div>
+        <div className="text-violet-400 font-black text-[12px] uppercase tracking-[0.6em] mb-8">Operating Node Selection</div>
         <h2 className="text-7xl md:text-9xl font-black text-white mb-10 tracking-tighter outfit uppercase italic leading-none">The Matrix.</h2>
         <div className="w-32 h-2.5 bg-gradient-to-r from-violet-500 to-indigo-500 mx-auto mb-12 rounded-full"></div>
         <p className="text-slate-400 text-2xl font-medium max-w-3xl mx-auto leading-relaxed mb-40">Choose your level of intelligence sync. <br/>{isNexus ? 'Your Nexus Elite node is fully active.' : 'Start with a trial or unlock the complete enterprise OS.'}</p>
@@ -118,9 +126,9 @@ const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
 
                 <button 
                   onClick={() => handlePurchase(course)}
-                  className={`w-full font-black py-8 rounded-[3rem] text-center transition-all hover:scale-105 shadow-2xl text-[13px] uppercase tracking-[0.4em] active:scale-95 ${isNexus && course.id === 'nexus' ? 'bg-violet-600 text-white' : 'bg-white text-slate-950 hover:bg-violet-500 hover:text-white'}`}
+                  className={`w-full font-black py-8 rounded-[3rem] text-center transition-all hover:scale-105 shadow-2xl text-[13px] uppercase tracking-[0.4em] active:scale-95 ${isNexus && course.id === 'nexus' ? 'bg-violet-600 text-white' : 'bg-white text-slate-950 hover:bg-violet-50 hover:text-white'}`}
                 >
-                  {isNexus && course.id === 'nexus' ? 'Node Active' : 'Activate Node'}
+                  {isNexus && (course.id === 'nexus' || (isNexus && course.id !== 'trial')) ? 'Node Active' : 'Activate Node'}
                 </button>
               </div>
             </div>

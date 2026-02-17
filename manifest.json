@@ -1,12 +1,12 @@
 {
-  "name": "Faceless Digital Life",
-  "short_name": "Faceless",
+  "name": "AXIS Creator Hub",
+  "short_name": "AXIS Hub",
   "description": "The unified operating system for elite digital marketing and high-fidelity content creation.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#020617",
-  "theme_color": "#6366f1",
+  "theme_color": "#8b5cf6",
   "orientation": "portrait",
   "categories": ["productivity", "business", "multimedia"],
   "icons": [

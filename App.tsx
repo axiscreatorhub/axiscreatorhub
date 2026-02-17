@@ -10,7 +10,6 @@ import AboutUs from './components/AboutUs';
 import CourseList from './components/CourseList';
 import Footer from './components/Footer';
 import MobileNav from './components/MobileNav';
-import StoreReadiness from './components/StoreReadiness';
 import SalesNotification from './components/SalesNotification';
 
 const App: React.FC = () => {
@@ -22,9 +21,9 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen selection:bg-violet-500/20 selection:text-white bg-[#020617] text-white pb-safe pt-safe">
-      {/* AXIS Status Bar */}
+      {/* AXIS Production Status Bar */}
       <div className="hidden sm:block bg-white text-slate-950 py-3.5 text-center text-[10px] font-black uppercase tracking-[0.5em] sticky top-0 z-[110] shadow-2xl border-b border-violet-500/10">
-        AXIS CREATOR HUB • {isNexus ? 'NEXUS ELITE OMNI-AI' : 'OPERATING SYSTEM ACTIVE'} • v7.1.0 PRO
+        AXIS CREATOR HUB • {isNexus ? 'NEXUS ELITE NODE ACTIVE' : 'SECURE OPERATING SYSTEM'} • PRODUCTION v7.1.0
       </div>
       
       <Navbar />
@@ -41,7 +40,6 @@ const App: React.FC = () => {
           <CourseList onUpgrade={() => setIsNexus(true)} isNexus={isNexus} />
           <AcademyPortal />
           <IntelligenceLab />
-          <StoreReadiness />
         </div>
       </main>
 
