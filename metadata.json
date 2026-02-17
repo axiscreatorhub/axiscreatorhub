@@ -1,11 +1,11 @@
 {
-  "name": "Faceless Digital Life",
-  "short_name": "Faceless",
-  "description": "The world-class unified AI operating system for influencers and digital marketers. Powered by Faceless Digital Life.",
+  "name": "AXIS Creator Hub",
+  "short_name": "AXIS",
+  "description": "The elite AI-driven operating system for modern creators and influencers. Synchronized with Google AI.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#020617",
-  "theme_color": "#6366f1",
+  "theme_color": "#8b5cf6",
   "requestFramePermissions": [
     "camera",
     "microphone",
