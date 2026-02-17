@@ -12,6 +12,13 @@ const FLOW_MESSAGES = [
   "Encoding viral distribution metadata..."
 ];
 
+const PRESETS = [
+  { label: 'TikTok Viral', prompt: 'High-energy viral hook, fast transitions, vibrant colors, influencer aesthetic' },
+  { label: 'Insta Premium', prompt: 'Sophisticated luxury aesthetic, soft cinematic lighting, professional color grade' },
+  { label: 'YouTube Short', prompt: 'Engaging cinematic story-beat, high-fidelity resolution, clear focal point' },
+  { label: 'Brand Ad', prompt: 'Clean professional product showcase, studio lighting, minimalistic background' }
+];
+
 type HubTab = 'video' | 'visual' | 'strategy' | 'audio';
 
 const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => {
@@ -89,22 +96,15 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
       }
     } catch (e: any) {
       console.error(e);
-      if (e.message?.includes("entity was not found")) {
-        // @ts-ignore
-        await window.aistudio.openSelectKey();
-      }
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handlePastePrompt = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      setPrompt(text);
-    } catch (e) {
-      alert("Please allow clipboard permissions to paste external prompts.");
-    }
+  const applyPreset = (p: string) => {
+    setPrompt(p);
+    const element = document.getElementById('manifest-input');
+    if (element) element.focus();
   };
 
   return (
@@ -116,7 +116,7 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 mb-6">
               <div className="w-2.5 h-2.5 rounded-full bg-violet-500 animate-ping"></div>
-              <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.6em]">AXIS | THE CREATION FOUNDRY</span>
+              <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.6em]">AXIS | CREATIVE STUDIO</span>
             </div>
             <h2 className="text-6xl md:text-7xl font-black text-white tracking-tighter outfit italic leading-[0.9] uppercase">The Omni <span className="text-gradient">Engine.</span></h2>
           </div>
@@ -125,8 +125,7 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
             {[
               { id: 'video', label: 'Cinema', icon: '📽️' },
               { id: 'visual', label: 'Visuals', icon: '🎨' },
-              { id: 'strategy', label: 'Strategy', icon: '🧠' },
-              { id: 'audio', label: 'Audio', icon: '🎙️' }
+              { id: 'strategy', label: 'Strategy', icon: '🧠' }
             ].map((t) => (
               <button 
                 key={t.id} 
@@ -142,49 +141,45 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
 
         <div className="grid lg:grid-cols-12 gap-16 items-start">
           <div className="lg:col-span-4 space-y-10">
-            <div className="p-12 glass-card rounded-[4.5rem] relative overflow-hidden group shadow-inner">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-violet-500/20 transition-all"></div>
+            <div className="p-10 glass-card rounded-[4.5rem] relative overflow-hidden group shadow-inner">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all"></div>
               
-              <div className="flex justify-between items-center mb-8">
-                <label className="text-[10px] font-black text-violet-400 uppercase tracking-[0.5em]">Manifest Prompt</label>
-                <button 
-                  onClick={handlePastePrompt}
-                  className="text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeWidth={2.5}/></svg>
-                  Paste from External
-                </button>
+              <div className="mb-8">
+                <label className="text-[10px] font-black text-violet-400 uppercase tracking-[0.5em] mb-6 block">Quick Templates</label>
+                <div className="flex flex-wrap gap-3">
+                  {PRESETS.map((p, idx) => (
+                    <button 
+                      key={idx} 
+                      onClick={() => applyPreset(p.prompt)}
+                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-white uppercase tracking-widest hover:bg-violet-600 hover:border-violet-600 transition-all"
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              
+
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mb-4 block">Manifest Prompt</label>
               <textarea 
+                id="manifest-input"
                 value={prompt} 
                 onChange={(e) => setPrompt(e.target.value)} 
-                placeholder="Describe your vision or paste a complex ChatGPT prompt here for AI manifestation..." 
-                className="w-full h-56 bg-black/40 border border-white/10 rounded-[2.5rem] p-10 text-sm font-medium text-white focus:ring-4 focus:ring-violet-500/20 outline-none transition-all resize-none shadow-inner mb-10 placeholder:text-slate-700" 
+                placeholder="What are we creating today?" 
+                className="w-full h-48 bg-black/40 border border-white/10 rounded-[2.5rem] p-8 text-sm font-medium text-white focus:ring-4 focus:ring-violet-500/20 outline-none transition-all resize-none shadow-inner mb-8 placeholder:text-slate-700" 
               />
               
-              <div className="space-y-10">
-                <div>
-                  <label className="block text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mb-6">Aesthetic Standard</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {['Cinematic 8K', 'Hyper-Real', 'Cyber-Neon', 'Avant-Garde'].map(style => (
-                      <button key={style} onClick={() => setArtStyle(style)} className={`py-5 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all ${artStyle === style ? 'bg-violet-600 text-white border-violet-600 shadow-xl shadow-violet-500/20' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'}`}>
-                        {style}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
+              <div className="space-y-8">
                 <button 
                   onClick={handleManifest} 
-                  disabled={isProcessing} 
-                  className="w-full mt-12 bg-white text-slate-950 font-black py-9 rounded-[3rem] text-[14px] uppercase tracking-[0.5em] shadow-[0_30px_80px_rgba(255,255,255,0.15)] transition-all hover:scale-[1.02] disabled:opacity-50 active:scale-95"
+                  disabled={isProcessing || !prompt.trim()} 
+                  className="w-full bg-white text-slate-950 font-black py-8 rounded-[3rem] text-[14px] uppercase tracking-[0.5em] shadow-[0_30px_80px_rgba(255,255,255,0.15)] transition-all hover:scale-[1.02] disabled:opacity-30 active:scale-95"
                 >
-                  {isProcessing ? 'Synthesizing Pulse...' : `Initialize Manifest`}
+                  {isProcessing ? 'Synthesizing...' : `Manifest`}
                 </button>
                 
-                <p className="text-[9px] text-center text-slate-500 font-bold uppercase tracking-widest opacity-60">
-                  <span className="text-emerald-500">✔</span> Safety Filters Active • AI Driven OS
+                <p className="text-[9px] text-center text-slate-500 font-bold uppercase tracking-widest opacity-60 flex items-center justify-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  AI SYNC: OPTIMAL
                 </p>
               </div>
             </div>
@@ -194,10 +189,7 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
             <div className="bg-white/5 rounded-[5rem] aspect-video w-full flex items-center justify-center overflow-hidden relative border border-white/10 shadow-[0_60px_120px_-30px_rgba(0,0,0,0.6)] group">
               {isProcessing && (
                 <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-3xl z-10 flex flex-col items-center justify-center text-center p-16 animate-fadeIn">
-                  <div className="w-32 h-32 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-[35%] animate-spin flex items-center justify-center shadow-2xl mb-14">
-                     <div className="w-16 h-16 bg-slate-950 rounded-full"></div>
-                  </div>
-                  <h4 className="text-xl font-black text-white uppercase tracking-[0.6em] mb-6">Manifestation in Progress</h4>
+                  <div className="w-24 h-24 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mb-10 shadow-[0_0_30px_rgba(139,92,246,0.3)]"></div>
                   <p className="text-[14px] font-bold text-violet-400 animate-pulse uppercase tracking-[0.4em]">{FLOW_MESSAGES[statusIdx]}</p>
                 </div>
               )}
@@ -205,20 +197,19 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
               {result ? (
                 <div className="w-full h-full flex flex-col animate-fadeIn">
                   {result.type === 'text' ? (
-                    <div className="w-full h-full p-24 overflow-y-auto bg-white/5 text-slate-300">
-                      <h3 className="text-5xl font-black italic outfit mb-14 text-gradient uppercase tracking-tighter leading-none">Strategic Manifesto</h3>
-                      <div className="whitespace-pre-wrap text-xl leading-loose font-medium opacity-90 prose prose-invert max-w-none">{result.content}</div>
+                    <div className="w-full h-full p-20 overflow-y-auto bg-white/5 text-slate-300">
+                      <div className="prose prose-invert max-w-none text-xl leading-loose">{result.content}</div>
                     </div>
                   ) : result.type === 'image' ? (
                     <img src={result.url} className="w-full h-full object-contain" alt="Manifested Asset" />
                   ) : (
                     <video src={result.url} controls autoPlay loop className="w-full h-full object-contain" />
                   )}
-                  <div className="absolute bottom-16 right-16 flex gap-6">
-                    <button onClick={() => setResult(null)} className="p-8 bg-white/10 border border-white/20 rounded-3xl text-white hover:bg-red-500 transition-colors backdrop-blur-2xl">
-                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeWidth={2.5}/></svg>
+                  <div className="absolute bottom-12 right-12 flex gap-4">
+                    <button onClick={() => setResult(null)} className="p-6 bg-white/10 border border-white/20 rounded-2xl text-white hover:bg-red-500 transition-colors backdrop-blur-2xl">
+                       ✕
                     </button>
-                    <button onClick={() => setIsShareModalOpen(true)} className="px-16 py-8 bg-white text-slate-950 font-black text-[14px] uppercase tracking-[0.3em] rounded-[2.5rem] hover:scale-105 transition-transform shadow-2xl">Deploy to Cloud</button>
+                    <button onClick={() => setIsShareModalOpen(true)} className="px-12 py-6 bg-white text-slate-950 font-black text-[12px] uppercase tracking-[0.3em] rounded-[2rem] hover:scale-105 transition-transform shadow-2xl">Deploy Asset</button>
                   </div>
                 </div>
               ) : (
