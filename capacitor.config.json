@@ -1,0 +1,18 @@
+{
+  "appId": "com.faceless.digitallife",
+  "appName": "Faceless Digital Life",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "backgroundColor": "#020617"
+  },
+  "ios": {
+    "contentInset": "always"
+  }
+}
