@@ -4,7 +4,7 @@ import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Faceless OS could not find root node.");
+  throw new Error("AXIS OS could not find root node.");
 }
 
 const root = ReactDOM.createRoot(rootElement);

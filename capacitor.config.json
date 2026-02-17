@@ -1,6 +1,6 @@
 {
-  "appId": "com.faceless.digitallife",
-  "appName": "Faceless Digital Life",
+  "appId": "com.axishub.ai",
+  "appName": "AXIS Creator Hub",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {

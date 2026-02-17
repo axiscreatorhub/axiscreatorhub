@@ -50,19 +50,33 @@ interface CourseListProps {
 }
 
 const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
-  const handlePurchase = (courseId: string) => {
-    if (courseId === 'trial') {
+  const payWithPaystack = (course: Course) => {
+    // @ts-ignore
+    const handler = PaystackPop.setup({
+      key: 'pk_live_your_actual_key_here', // In production, this should come from env: process.env.PAYSTACK_PUBLIC_KEY
+      email: 'customer@axiscreatorhub.com',
+      amount: parseFloat(course.price.replace('$', '').replace('/mo', '')) * 100 * 1500, // Conversion if needed, or flat rate
+      currency: 'NGN', // Paystack default, can be USD if account supports it
+      ref: 'AXIS-' + Math.floor((Math.random() * 1000000000) + 1),
+      callback: (response: any) => {
+        alert('Payment successful. Transaction reference: ' + response.reference);
+        if (onUpgrade) onUpgrade();
+        window.location.href = '#hub';
+      },
+      onClose: () => {
+        alert('Transaction cancelled. Your AXIS Node remains in trial mode.');
+      }
+    });
+    handler.openIframe();
+  };
+
+  const handlePurchase = (course: Course) => {
+    if (course.id === 'trial') {
       window.location.href = '#hub';
       return;
     }
     
-    const confirmPurchase = window.confirm(`Activate ${courseId} via Paystack Secure Terminal? \n\nElite manifestation standards will be synchronized immediately.`);
-    
-    if (confirmPurchase && onUpgrade) {
-      onUpgrade();
-      alert(`AXIS Nexus Synchronized. Welcome to the elite tier.`);
-      window.location.href = '#hub';
-    }
+    payWithPaystack(course);
   };
 
   return (
@@ -103,7 +117,7 @@ const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
                 </ul>
 
                 <button 
-                  onClick={() => handlePurchase(course.id)}
+                  onClick={() => handlePurchase(course)}
                   className={`w-full font-black py-8 rounded-[3rem] text-center transition-all hover:scale-105 shadow-2xl text-[13px] uppercase tracking-[0.4em] active:scale-95 ${isNexus && course.id === 'nexus' ? 'bg-violet-600 text-white' : 'bg-white text-slate-950 hover:bg-violet-500 hover:text-white'}`}
                 >
                   {isNexus && course.id === 'nexus' ? 'Node Active' : 'Activate Node'}
