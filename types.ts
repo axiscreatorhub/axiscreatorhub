@@ -44,3 +44,15 @@ export interface Course {
   badge?: string;
   modules?: CourseModule[];
 }
+
+declare global {
+  interface Window {
+    PaystackPop?: {
+      setup: (config: Record<string, unknown>) => { openIframe: () => void };
+    };
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}

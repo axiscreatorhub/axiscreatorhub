@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AXIS Creator Hub | Your Social Media Superpower</title>
-    <meta name="description" content="AXIS: The fun, fast, and intuitive AI operating system for creators. Manifest viral content in seconds.">
+    <title>AXIS Creator Hub | The Viral Content OS</title>
+    <meta name="description" content="AXIS Creator Hub: The premium operating system for modern creators. Batch viral hooks, generate aesthetic assets, and scale your brand identity.">
     
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://esm.sh">
+
     <!-- PWA & Mobile Meta -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,9 +21,9 @@
     <!-- Paystack Integration -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
     
-    <!-- Custom AXIS Branded Favicons (SVG Data URI for crisp scaling) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f472b6' /%3E%3Cstop offset='100%25' style='stop-color:%238b5cf6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Cpath d='M16 6L6 11l10 5 10-5-10-5zM6 21l10 5 10-5M6 16l10 5 10-5' stroke='url(%23g)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f472b6' /%3E%3Cstop offset='100%25' style='stop-color:%238b5cf6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='%23020617'/%3E%3Cpath d='M90 40L40 65l50 25 50-25-50-25zM40 115l50 25 50-25M40 90l50 25 50-25' stroke='url(%23g)' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <!-- Custom Branding Favicons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f472b6' /%3E%3Cstop offset='100%25' style='stop-color:%238b5cf6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='url(%23g)' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f472b6' /%3E%3Cstop offset='100%25' style='stop-color:%238b5cf6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='%23020617'/%3E%3Cpath d='M90 60v60M60 90h60' stroke='url(%23g)' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="manifest" href="./manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +31,7 @@
     <style>
         :root {
             --axis-violet: #8b5cf6;
-            --axis-indigo: #6366f1;
+            --axis-pink: #f472b6;
             --axis-obsidian: #020617;
         }
         
@@ -53,10 +58,17 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .axis-badge {
+        .lifestyle-badge {
             background: linear-gradient(90deg, rgba(244, 114, 182, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
             border: 1px solid rgba(139, 92, 246, 0.2);
         }
+
+        .shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     </style>
 <script type="importmap">
 {

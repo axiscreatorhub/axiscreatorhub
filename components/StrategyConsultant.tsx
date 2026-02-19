@@ -8,7 +8,7 @@ const StrategyConsultant: React.FC = () => {
   const [isThinking, setIsThinking] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   
-  const chatRef = useRef<any>(null);
+  const chatRef = useRef<ReturnType<GoogleGenAI['chats']['create']> | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const StrategyConsultant: React.FC = () => {
         model: 'gemini-3-pro-preview',
         config: {
           thinkingConfig: { thinkingBudget: 32768 },
-          systemInstruction: "You are the AXIS Hub Lead Creator Strategist. Your mission is to help everyone—from beginners to pros—master social media marketing. You provide advice on TikTok hooks, Instagram aesthetics, and YouTube growth. Your tone is invigorating, fun, supportive, and world-class. You are the definitive guide for anyone wanting to build a presence in the modern creator economy."
+          systemInstruction: "You are the AXIS Hub Lead Creator Strategist. Your mission is to help everyone—from beginners to pros—master faceless social media marketing. You specialize in content strategies that don't require showing a face, including high-end aesthetic reels, text-over-video hooks, and voice-over shorts. You provide advice on TikTok hooks, Instagram aesthetics, and YouTube growth. Your tone is invigorating, fun, supportive, and world-class. You are the definitive guide for anyone wanting to build a presence in the modern faceless creator economy."
         }
       });
     }
@@ -50,6 +50,7 @@ const StrategyConsultant: React.FC = () => {
 
     try {
       initChat();
+      if (!chatRef.current) return;
       const streamResponse = await chatRef.current.sendMessageStream({ message: userMsg });
       let fullText = "";
       setMessages(prev => [...prev, { role: 'model', text: "" }]);
@@ -67,8 +68,8 @@ const StrategyConsultant: React.FC = () => {
           });
         }
       }
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
       setMessages(prev => [...prev, { role: 'model', text: "AXIS Connection reset. Let's try that again!" }]);
     } finally {
       setIsThinking(false);
@@ -110,8 +111,8 @@ const StrategyConsultant: React.FC = () => {
                   <div className="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mb-8 border border-pink-100">
                     <span className="text-3xl">💡</span>
                   </div>
-                  <h5 className="text-2xl font-black outfit italic mb-3 uppercase tracking-tighter">Need a Hook?</h5>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-[0.2em] leading-loose max-w-xs">Ask for a viral strategy or a fresh TikTok idea.</p>
+                  <h5 className="text-2xl font-black outfit italic mb-3 uppercase tracking-tighter">Faceless Strategy?</h5>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-[0.2em] leading-loose max-w-xs">Ask for a faceless hook or an anonymous brand concept.</p>
                 </div>
               )}
               {messages.map((m, i) => (
@@ -135,7 +136,7 @@ const StrategyConsultant: React.FC = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   disabled={isStreaming}
-                  placeholder="Ask for a viral idea..."
+                  placeholder="Ask for a faceless viral hook..."
                   className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-8 py-6 pr-16 text-sm font-medium outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                 />
                 <button 

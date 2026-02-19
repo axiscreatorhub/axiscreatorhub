@@ -1,13 +1,11 @@
-import React from 'react';
-
 interface LogoProps {
   className?: string;
   withText?: boolean;
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const Logo: React.FC<LogoProps> = ({ className = '', withText = true, size = 'md' }) => {
-  const sizeMap = {
+const Logo = ({ className = '', withText = true, size = 'md' }: LogoProps) => {
+  const sizeMap: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
     sm: 'h-6 text-xl',
     md: 'h-8 text-2xl',
     lg: 'h-12 text-4xl',
@@ -20,9 +18,8 @@ const Logo: React.FC<LogoProps> = ({ className = '', withText = true, size = 'md
         <div className="absolute inset-0 bg-pink-500/20 rounded-2xl blur-lg animate-pulse"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-pink-500 to-violet-500 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden group">
           <svg className="w-3/5 h-3/5 text-white drop-shadow-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
+             <circle cx="12" cy="12" r="10" />
+             <path d="M12 8v8M8 12h8" />
           </svg>
         </div>
       </div>

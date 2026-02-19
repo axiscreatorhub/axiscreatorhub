@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -7,7 +7,7 @@ interface ShareModalProps {
   assetType: string;
 }
 
-const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, assetType }) => {
+const ShareModal = ({ isOpen, onClose, assetUrl, assetType }: ShareModalProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [trackableLink, setTrackableLink] = useState<string | null>(null);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
@@ -22,6 +22,12 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
 
   const platforms = [
     { 
+      name: 'WhatsApp', 
+      icon: '💬', 
+      color: 'bg-[#25D366]',
+      handler: () => handlePlatformShare('WhatsApp')
+    },
+    { 
       name: 'Instagram', 
       icon: '📸', 
       color: 'bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888]',
@@ -34,21 +40,15 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
       handler: () => handlePlatformShare('TikTok')
     },
     { 
-      name: 'YouTube', 
-      icon: '📽️', 
-      color: 'bg-[#ff0000]',
-      handler: () => handlePlatformShare('YouTube')
+      name: 'Facebook', 
+      icon: '👥', 
+      color: 'bg-[#1877F2]',
+      handler: () => handlePlatformShare('Facebook')
     },
     { 
-      name: 'Twitter (X)', 
-      icon: '✖️', 
-      color: 'bg-slate-900',
-      handler: () => handlePlatformShare('Twitter')
-    },
-    { 
-      name: 'Direct Pulse', 
+      name: 'Direct Share', 
       icon: '🚀', 
-      color: 'bg-indigo-600',
+      color: 'bg-violet-600',
       handler: () => handleNativeShare()
     }
   ];
@@ -57,7 +57,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
     setIsGeneratingLink(true);
     setTimeout(() => {
       const uniqueId = Math.random().toString(36).substring(2, 10).toUpperCase();
-      const generatedLink = `https://axiscreatorhub.vercel.app/pulse/${uniqueId}`;
+      const generatedLink = `https://axiscreatorhub.com/drop/${uniqueId}`;
       setTrackableLink(generatedLink);
       setIsGeneratingLink(false);
     }, 1200);
@@ -67,12 +67,12 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
     const response = await fetch(url);
     const blob = await response.blob();
     const extension = type === 'video' ? 'mp4' : 'png';
-    return new File([blob], `axis-manifest-${Date.now()}.${extension}`, { type: blob.type });
+    return new File([blob], `axis-drop-${Date.now()}.${extension}`, { type: blob.type });
   };
 
   const handleNativeShare = async () => {
     if (!navigator.share) {
-      alert('Web Share API not supported in this browser.');
+      alert('Sharing API not supported. Use manual download.');
       return;
     }
 
@@ -80,8 +80,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
     try {
       const file = await getFileFromUrl(assetUrl, assetType);
       const shareData: ShareData = {
-        title: 'AXIS Creator Hub Manifest',
-        text: 'Just manifested this elite asset on AXIS Hub.',
+        title: 'AXIS Creator Hub Asset',
+        text: 'Just dropped this elite content from the AXIS Hub.',
         files: [file],
       };
 
@@ -89,8 +89,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
         await navigator.share(shareData);
       } else {
         await navigator.share({
-          title: 'AXIS Manifest',
-          text: 'Check out my new creation!',
+          title: 'AXIS Drop',
+          text: 'Check out my new content drop!',
           url: trackableLink || window.location.href
         });
       }
@@ -105,6 +105,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
     const file = await getFileFromUrl(assetUrl, assetType);
     const downloadUrl = URL.createObjectURL(file);
     
+    // Auto-download for platforms that require manual upload
     const link = document.createElement('a');
     link.href = downloadUrl;
     link.download = file.name;
@@ -112,14 +113,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
     link.click();
     document.body.removeChild(link);
 
-    const shareText = encodeURIComponent("Be the next gen creator. Just manifested a new asset with AXIS Creator Hub! 🚀 #AXISCreatorHub #AI #Influencer");
+    const shareText = encodeURIComponent("Executing my viral content strategy on the AXIS Hub. 🚀 #AXISCreatorHub #FacelessMarketing");
     const shareUrl = encodeURIComponent(trackableLink || window.location.href);
 
     const platformUrls: Record<string, string> = {
       Instagram: 'https://www.instagram.com/',
       TikTok: 'https://www.tiktok.com/upload',
-      YouTube: 'https://www.youtube.com/upload',
-      Twitter: `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`
+      WhatsApp: `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`
     };
 
     setTimeout(() => {
@@ -129,7 +130,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('Pulse Link copied! Ready for viral distribution.');
+    alert('Asset link copied! Ready for distribution.');
   };
 
   return (
@@ -138,8 +139,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight italic outfit uppercase leading-none">Pulse Hub</h3>
-              <p className="text-violet-600 font-bold text-[10px] uppercase tracking-[0.3em] mt-3">AXIS HUB ASSET READY FOR DEPLOYMENT</p>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight italic outfit uppercase leading-none">Share Drop</h3>
+              <p className="text-violet-600 font-bold text-[10px] uppercase tracking-[0.3em] mt-3">AXIS DISTRIBUTION ENGINE ACTIVE</p>
             </div>
             <button onClick={onClose} className="p-4 hover:bg-slate-50 rounded-3xl transition-all">
               <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth={2.5}/></svg>
@@ -155,7 +156,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
                 onClick={p.handler}
               >
                 <div className={`w-12 h-12 ${p.color} rounded-2xl flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform text-white`}>
-                  {isSharing && p.name === 'Direct Pulse' ? (
+                  {isSharing && p.name === 'Direct Share' ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : p.icon}
                 </div>
@@ -168,7 +169,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <span className="text-xl">🔗</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">SMART PULSE LINK</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">AXIS SMART ASSET LINK</span>
               </div>
             </div>
 
@@ -188,7 +189,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, assetUrl, asse
                   disabled={isGeneratingLink}
                   className="w-full py-5 bg-violet-600 rounded-2xl text-white font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] transition-all shadow-2xl flex items-center justify-center gap-3"
                 >
-                  {isGeneratingLink ? 'Syncing Node...' : 'Generate Tracker Link'}
+                  {isGeneratingLink ? 'Syncing...' : 'Generate Asset Link'}
                 </button>
               </div>
             )}

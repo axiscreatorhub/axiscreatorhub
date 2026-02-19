@@ -1,13 +1,11 @@
 
-import React from 'react';
-
 interface UserDashboardProps {
   usage: { images: number; videos: number };
   limits: { images: number; videos: number };
   tier: string;
 }
 
-const UserDashboard: React.FC<UserDashboardProps> = ({ usage, limits, tier }) => {
+const UserDashboard = ({ usage, limits, tier }: UserDashboardProps) => {
   const imagePercent = Math.min((usage.images / limits.images) * 100, 100);
   const videoPercent = Math.min((usage.videos / limits.videos) * 100, 100);
 

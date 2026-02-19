@@ -1,103 +1,60 @@
-import React from 'react';
+import { useState } from 'react';
 import { Course } from '../types';
-
-export const plans: Course[] = [
-  {
-    id: 'trial',
-    title: 'Trial Node',
-    description: 'Instant entry-level access to the AXIS engine. Experience the flow of manifestation.',
-    price: 'FREE',
-    features: ['20 Visual Manifestations', '5 Cinema Pulses', 'Standard Reasoning Node', 'Standard Resolution'],
-    link: '#hub',
-    image: 'https://images.unsplash.com/photo-1550745679-325348393049?auto=format&fit=crop&q=80&w=800',
-    badge: 'Limited Hub'
-  },
-  {
-    id: 'aesthetic',
-    title: 'Aesthetic Tier',
-    description: 'Engineered for social curators requiring high-impact visuals and 2K rendering standards.',
-    price: '$14.99/mo',
-    features: ['Unlimited Visual Manifest', '4K Rendering Priority', 'Imagen 4 Engine Access', 'Custom Aesthetic Presets'],
-    link: '#hub',
-    image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800',
-    badge: 'Creator Grade'
-  },
-  {
-    id: 'cinema',
-    title: 'Cinema Tier',
-    description: 'The definitive video operating system for creators. Full Veo 3.1 cinematic network access.',
-    price: '$39.99/mo',
-    features: ['Unlimited Video Pulses', '1080p Master Quality', 'Neural Voice Synthesis', 'Real-Time Trend Grounding'],
-    link: '#hub',
-    image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=800',
-    badge: 'Master Grade'
-  },
-  {
-    id: 'nexus',
-    title: 'Nexus Elite',
-    description: 'The ultimate enterprise omni-AI hub. Maximum thinking budget and priority Google Alpha access.',
-    price: '$159.99/mo',
-    features: ['Full Nexus OS Unlocked', 'Max Thinking (32K+)', '24/7 Strategic Support', 'Beta Google Tools Access'],
-    link: '#hub',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800',
-    badge: 'Enterprise Hub'
-  }
-];
+import { plans } from '../constants';
 
 interface CourseListProps {
   onUpgrade?: () => void;
   isNexus?: boolean;
 }
 
-const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
-  const payWithPaystack = (course: Course) => {
-    // @ts-ignore
-    if (!window.PaystackPop) {
-      alert("AXIS Gateway Error: Secure payment script not initialized. Please refresh.");
-      return;
-    }
+const CourseList = ({ onUpgrade, isNexus }: CourseListProps) => {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-    const priceNum = parseFloat(course.price.replace('$', '').replace('/mo', ''));
-    
-    // @ts-ignore
-    const handler = PaystackPop.setup({
-      // Ensure PAYSTACK_PUBLIC_KEY is set in Vercel Environment Variables
-      key: process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder', 
-      email: 'billing@axiscreatorhub.com',
-      amount: Math.round(priceNum * 100), // Paystack expects minor units (cents/kobo)
-      currency: 'USD',
-      ref: 'AXIS-SYNC-' + Math.floor((Math.random() * 10000000) + 1),
-      callback: (response: any) => {
-        if (onUpgrade) onUpgrade();
-        alert('Node Activation Successful. Reference: ' + response.reference);
-        window.location.href = '#hub';
-      },
-      onClose: () => {
-        console.log('AXIS Activation Deferred.');
-      }
-    });
-    handler.openIframe();
-  };
-
-  const handlePurchase = (course: Course) => {
+  const handleActivate = async (course: Course) => {
     if (course.id === 'trial') {
-      window.location.href = '#hub';
+      window.location.hash = 'hub';
       return;
     }
-    payWithPaystack(course);
+
+    setLoadingPlan(course.id);
+    
+    // Simulating AXIS x Paystack x Resend integrated flow
+    setTimeout(() => {
+      if (window.PaystackPop) {
+        const priceNum = parseFloat(course.price.replace('$', '').replace('/mo', ''));
+        const handler = window.PaystackPop.setup({
+          key: process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder', 
+          email: 'billing@axiscreatorhub.com',
+          amount: Math.round(priceNum * 100),
+          currency: 'USD',
+          ref: 'AXIS-SYNC-' + Math.floor((Math.random() * 10000000) + 1),
+          callback: () => {
+            if (onUpgrade) onUpgrade();
+            // In production, your backend would now call Resend to send a "Welcome to Elite" email
+            alert('Nexus Sync Successful. Check your email for onboarding docs.');
+            window.location.hash = 'hub';
+          },
+          onClose: () => setLoadingPlan(null)
+        });
+        handler.openIframe();
+      } else {
+        if (onUpgrade) onUpgrade();
+        setLoadingPlan(null);
+      }
+    }, 1200);
   };
 
   return (
     <section id="trial" className="py-48 bg-[#020617] relative">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <div className="text-violet-400 font-black text-[12px] uppercase tracking-[0.6em] mb-8">Operating Node Selection</div>
-        <h2 className="text-7xl md:text-9xl font-black text-white mb-10 tracking-tighter outfit uppercase italic leading-none">The Matrix.</h2>
+        <div className="text-violet-400 font-black text-[12px] uppercase tracking-[0.6em] mb-8">Axis Hub Tier Selection</div>
+        <h2 className="text-7xl md:text-9xl font-black text-white mb-10 tracking-tighter outfit uppercase italic leading-none">The Brand.</h2>
         <div className="w-32 h-2.5 bg-gradient-to-r from-violet-500 to-indigo-500 mx-auto mb-12 rounded-full"></div>
-        <p className="text-slate-400 text-2xl font-medium max-w-3xl mx-auto leading-relaxed mb-40">Choose your level of intelligence sync. <br/>{isNexus ? 'Your Nexus Elite node is fully active.' : 'Start with a trial or unlock the complete enterprise OS.'}</p>
+        <p className="text-slate-400 text-2xl font-medium max-w-3xl mx-auto leading-relaxed mb-40">Choose your level of engagement. <br/>{isNexus ? 'Your Nexus Elite plan is fully active.' : 'Start with a trial or unlock the complete enterprise OS.'}</p>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-left">
           {plans.map((course) => (
-            <div key={course.id} className={`group relative flex flex-col bg-white/5 rounded-[4.5rem] overflow-hidden transition-all hover:bg-white/10 hover:-translate-y-5 border border-white/10 shadow-2xl ${isNexus && course.id === 'nexus' ? 'ring-4 ring-violet-500 ring-offset-[16px] ring-offset-slate-950' : ''}`}>
+            <div key={course.id} className={`group relative flex flex-col bg-white/5 rounded-[4.5rem] overflow-hidden transition-all hover:bg-white/10 hover:-translate-y-5 border border-white/10 shadow-2xl ${isNexus && (course.id === 'nexus' || (isNexus && course.id !== 'trial')) ? 'ring-4 ring-violet-500' : ''}`}>
               <div className="relative h-80 overflow-hidden">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-125" />
                 {course.badge && (
@@ -125,10 +82,15 @@ const CourseList: React.FC<CourseListProps> = ({ onUpgrade, isNexus }) => {
                 </ul>
 
                 <button 
-                  onClick={() => handlePurchase(course)}
-                  className={`w-full font-black py-8 rounded-[3rem] text-center transition-all hover:scale-105 shadow-2xl text-[13px] uppercase tracking-[0.4em] active:scale-95 ${isNexus && course.id === 'nexus' ? 'bg-violet-600 text-white' : 'bg-white text-slate-950 hover:bg-violet-50 hover:text-white'}`}
+                  onClick={() => handleActivate(course)}
+                  disabled={loadingPlan === course.id}
+                  className={`w-full font-black py-8 rounded-[3rem] text-center transition-all hover:scale-105 shadow-2xl text-[13px] uppercase tracking-[0.4em] active:scale-95 flex items-center justify-center gap-3 ${isNexus && (course.id === 'nexus' || (isNexus && course.id !== 'trial')) ? 'bg-violet-600 text-white' : 'bg-white text-slate-950 hover:bg-violet-50'}`}
                 >
-                  {isNexus && (course.id === 'nexus' || (isNexus && course.id !== 'trial')) ? 'Node Active' : 'Activate Node'}
+                  {loadingPlan === course.id ? (
+                    <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    (isNexus && (course.id === 'nexus' || (isNexus && course.id !== 'trial'))) ? 'Plan Active' : 'Activate Plan'
+                  )}
                 </button>
               </div>
             </div>

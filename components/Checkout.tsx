@@ -6,7 +6,7 @@ interface CheckoutProps {
   selectedCourse: Course | null;
 }
 
-const Checkout: React.FC<CheckoutProps> = ({ selectedCourse }) => {
+const Checkout = ({ selectedCourse }: CheckoutProps) => {
   const [formData, setFormData] = useState({ name: '', email: '', cc: '', expiry: '', cvc: '' });
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
   const [isProcessing, setIsProcessing] = useState(false);

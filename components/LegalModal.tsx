@@ -1,15 +1,13 @@
-import React from 'react';
-
 interface LegalModalProps {
   isOpen: boolean;
   onClose: () => void;
   type: 'Privacy' | 'Terms' | 'EULA';
 }
 
-const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type }) => {
+const LegalModal = ({ isOpen, onClose, type }: LegalModalProps) => {
   if (!isOpen) return null;
 
-  const content = {
+  const content: Record<'Privacy' | 'Terms' | 'EULA', { title: string; text: string }> = {
     Privacy: {
       title: "Privacy Shield v7.0",
       text: "AXIS Creator Hub strictly enforces data sovereignty. We utilize Google Cloud infrastructure for the processing of all manifestations. Your prompt history is private and utilized solely for your creative output. We do not sell user data. All generated assets are processed via secure API nodes."

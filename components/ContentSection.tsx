@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { ContentPoint } from '../types';
 
 interface ContentSectionProps {
@@ -12,7 +11,7 @@ interface ContentSectionProps {
   theme?: 'dark' | 'light';
 }
 
-const ContentSection: React.FC<ContentSectionProps> = ({ 
+const ContentSection = ({ 
   id, 
   title, 
   subtitle, 
@@ -20,7 +19,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
   imageSrc, 
   imagePosition,
   theme = 'light'
-}) => {
+}: ContentSectionProps) => {
   const isImageLeft = imagePosition === 'left';
   const bulletColors = ['bg-blue-600', 'bg-purple-600', 'bg-red-600'];
   
@@ -33,7 +32,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
             <p className="text-xl text-slate-600 leading-relaxed font-medium">{subtitle}</p>
           </div>
           <div className="space-y-8">
-            {points.map((point, index) => (
+            {points.map((point: ContentPoint, index: number) => (
               <div key={index} className="flex gap-6 group">
                 <div className={`flex-shrink-0 w-12 h-12 rounded-2xl ${bulletColors[index % 3]} flex items-center justify-center text-white font-black text-xl shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3`}>
                   {index + 1}

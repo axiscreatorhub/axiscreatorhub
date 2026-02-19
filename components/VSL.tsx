@@ -5,7 +5,7 @@ const VSL: React.FC = () => {
 
   const steps = [
     {
-      title: "Step 01: Connect Your Vibe",
+      title: "Step 01: Connect Your Hub",
       label: "SYNCING",
       desc: "Tap to link your AXIS Hub. It's like plugging into a Hollywood studio that fits in your pocket. Quick, secure, and ready to go.",
       image: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=1200",
@@ -21,17 +21,17 @@ const VSL: React.FC = () => {
       feature: "Smart Platform Logic"
     },
     {
-      title: "Step 03: Make Some Magic",
-      label: "MANIFESTING",
-      desc: "Describe your idea in plain English. 'A neon sunset transition' or 'Me dancing in Paris'. AXIS manifests it into reality instantly.",
+      title: "Step 03: Hook Your Audience",
+      label: "HOOKING",
+      desc: "Describe your faceless concept. 'A luxury aesthetic reel transition' or 'Cinematic desk setup'. AXIS generates the hook instantly.",
       image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=1200",
       icon: "✨",
-      feature: "AI Magic Engine"
+      feature: "AI Hook Engine"
     },
     {
       title: "Step 04: Drop It & Go Viral",
       label: "DEPLOYING",
-      desc: "Satisfied? Share directly to your social feeds with one tap. AXIS even handles the captions and tags so you can just enjoy the comments.",
+      desc: "Satisfied? Share directly to your social feeds with one tap. AXIS even handles the captions and tags so you can just enjoy the growth.",
       image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200",
       icon: "🚀",
       feature: "1-Tap Viral Drop"

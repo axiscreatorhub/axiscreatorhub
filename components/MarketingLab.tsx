@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
+import React, { useState, useEffect } from 'react';
+import { GoogleGenAI } from "@google/genai";
 
 const VIDEO_STATUS_MESSAGES = [
   "Initializing neural cinematic engine...",
@@ -23,19 +22,23 @@ const MarketingLab: React.FC = () => {
   
   useEffect(() => {
     let interval: number;
-    if (isGenerating && result?.type !== 'video') { // Rotating messages mainly for video as it takes longer
+    if (isGenerating && result?.type !== 'video') {
       interval = window.setInterval(() => {
         setStatusMessageIndex((prev) => (prev + 1) % VIDEO_STATUS_MESSAGES.length);
       }, 8000);
     }
     return () => clearInterval(interval);
-  }, [isGenerating]);
+  }, [isGenerating, result?.type]);
 
-  const checkApiKey = async () => {
-    // @ts-ignore
-    if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
-      // @ts-ignore
-      await window.aistudio.openSelectKey();
+  const handleError = async (e: unknown) => {
+    console.error("Marketing Lab Error:", e);
+    const msg = (e as Error).message?.toLowerCase() || "";
+    if (msg.includes("403") || msg.includes("permission") || msg.includes("404") || msg.includes("not found")) {
+      if (window.aistudio) {
+        await window.aistudio.openSelectKey();
+      }
+    } else {
+      alert("The AXIS Engine encountered an error. Please check your network or API settings.");
     }
   };
 
@@ -43,30 +46,25 @@ const MarketingLab: React.FC = () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
     try {
+      // CRITICAL: New instance per call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-image-preview',
         contents: { parts: [{ text: prompt }] },
         config: {
           imageConfig: {
-            aspectRatio: aspectRatio as any,
-            imageSize: imageSize as any
+            aspectRatio: aspectRatio as "1:1" | "3:4" | "4:3" | "9:16" | "16:9",
+            imageSize: imageSize as "1K" | "2K" | "4K"
           }
         }
       });
       
-      const part = response.candidates[0].content.parts.find(p => p.inlineData);
+      const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
       if (part?.inlineData) {
         setResult({ type: 'image', url: `data:image/png;base64,${part.inlineData.data}` });
       }
-    } catch (e: any) {
-      console.error(e);
-      if (e.message?.includes("Requested entity was not found")) {
-        // @ts-ignore
-        await window.aistudio.openSelectKey();
-      } else {
-        alert("Creative engine encountered an error. Please try a different prompt.");
-      }
+    } catch (e: unknown) {
+      await handleError(e);
     } finally {
       setIsGenerating(false);
     }
@@ -74,7 +72,6 @@ const MarketingLab: React.FC = () => {
 
   const handleVideoGen = async () => {
     if (!prompt.trim()) return;
-    await checkApiKey();
     setIsGenerating(true);
     setStatusMessageIndex(0);
     
@@ -86,7 +83,7 @@ const MarketingLab: React.FC = () => {
         config: {
           numberOfVideos: 1,
           resolution: '720p',
-          aspectRatio: aspectRatio as any
+          aspectRatio: aspectRatio as "16:9" | "9:16"
         }
       });
       
@@ -99,14 +96,8 @@ const MarketingLab: React.FC = () => {
       const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
       const blob = await videoResponse.blob();
       setResult({ type: 'video', url: URL.createObjectURL(blob) });
-    } catch (e: any) {
-      console.error(e);
-      if (e.message?.includes("Requested entity was not found")) {
-        // @ts-ignore
-        await window.aistudio.openSelectKey();
-      } else {
-        alert("Video generation failed. Ensure your Gemini API Key is billing-enabled.");
-      }
+    } catch (e: unknown) {
+      await handleError(e);
     } finally {
       setIsGenerating(false);
     }
@@ -133,7 +124,7 @@ const MarketingLab: React.FC = () => {
       
       setChatHistory(prev => [...prev, { role: 'model', text: response.text || "Thinking through the strategy..." }]);
     } catch (e) {
-      console.error(e);
+      await handleError(e);
     } finally {
       setIsGenerating(false);
     }
@@ -160,7 +151,7 @@ const MarketingLab: React.FC = () => {
               ].map(item => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
+                  onClick={() => setActiveTab(item.id as 'creative' | 'intelligence' | 'concierge')}
                   className={`w-full text-left p-6 rounded-[2rem] transition-all border ${activeTab === item.id ? 'bg-white border-[#D4AF37] shadow-2xl translate-x-2' : 'border-transparent hover:bg-white/50'}`}
                 >
                   <div className="flex items-center gap-4">

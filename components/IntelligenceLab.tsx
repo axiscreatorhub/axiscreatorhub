@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 const IntelligenceLab: React.FC = () => {
   const [activeAnalysis, setActiveAnalysis] = useState<'market' | 'media'>('market');
   const [query, setQuery] = useState('');
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [urls, setUrls] = useState<{web?: {uri: string, title: string}}[]>([]);
 
@@ -14,17 +14,20 @@ const IntelligenceLab: React.FC = () => {
     setUrls([]);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // Optimized: Use Flash for high-speed search grounding
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `AXIS MARKET INTELLIGENCE: Analyze ${query} with world-class accuracy. Provide trending triggers and strategic signals for digital influencers. Focus on ethical, safe growth strategies.`,
-        config: { tools: [{ googleSearch: {} }] }
+        config: { 
+          tools: [{ googleSearch: {} }],
+        }
       });
       
-      setAnalysisResult(response.text);
+      setAnalysisResult(response.text || null);
       if (response.candidates?.[0]?.groundingMetadata?.groundingChunks) {
-        setUrls(response.candidates[0].groundingMetadata.groundingChunks as any);
+        setUrls(response.candidates[0].groundingMetadata.groundingChunks as {web?: {uri: string, title: string}}[]);
       }
-    } catch (e) { console.error(e); } finally { setIsAnalyzing(false); }
+    } catch (_e) { console.error(_e); } finally { setIsAnalyzing(false); }
   };
 
   const handleMapsResearch = async () => {
@@ -32,13 +35,14 @@ const IntelligenceLab: React.FC = () => {
     setIsAnalyzing(true);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // Maps grounding is already fast on Flash 2.5
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: `AXIS GEO-INTEL: Research ${query} local creator opportunities and trending regional narratives for high-fidelity content deployment.`,
         config: { tools: [{ googleMaps: {} }] }
       });
-      setAnalysisResult(response.text);
-    } catch (e) { console.error(e); } finally { setIsAnalyzing(false); }
+      setAnalysisResult(response.text || null);
+    } catch (_e) { console.error(_e); } finally { setIsAnalyzing(false); }
   };
 
   return (
@@ -47,13 +51,13 @@ const IntelligenceLab: React.FC = () => {
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="max-w-4xl mb-32">
-          <div className="inline-flex items-center gap-3 px-5 py-2 mb-8 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.5em] text-violet-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse"></span>
-            Neural Intelligence Hub
+          <div className="inline-flex items-center gap-3 px-5 py-2 mb-8 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.5em] text-pink-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse"></span>
+            Fast Intelligence Hub
           </div>
-          <h2 className="text-6xl md:text-8xl font-black outfit italic mb-10 leading-[0.85] uppercase tracking-tighter">Strategic Intel. <br/><span className="text-gradient">World Class.</span></h2>
+          <h2 className="text-6xl md:text-8xl font-black outfit italic mb-10 leading-[0.85] uppercase tracking-tighter">Instant Intel. <br/><span className="text-gradient">Viral Pulse.</span></h2>
           <p className="text-slate-400 text-2xl leading-relaxed font-light max-w-3xl">
-            Leverage AXIS Hub proprietary grounding engine to identify global market shifts and regional trends with neural precision.
+            Leverage AXIS Hub high-speed grounding engine to identify global market shifts and regional trends in seconds.
           </p>
         </div>
 
@@ -71,12 +75,12 @@ const IntelligenceLab: React.FC = () => {
                   type="text" 
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder={activeAnalysis === 'market' ? "Research 'Emerging cinematic aesthetics 2024'..." : "Analyze the narrative flow of this strategy..."}
-                  className="w-full bg-black/20 border border-white/10 rounded-[2rem] px-10 py-8 pr-24 text-sm font-medium focus:ring-4 focus:ring-violet-500/20 outline-none transition-all placeholder:text-slate-700"
+                  placeholder={activeAnalysis === 'market' ? "Research 'Viral tiktok transitions'..." : "Analyze the narrative flow..."}
+                  className="w-full bg-black/20 border border-white/10 rounded-[2rem] px-10 py-8 pr-24 text-sm font-medium focus:ring-4 focus:ring-pink-500/20 outline-none transition-all placeholder:text-slate-700"
                 />
                 <button 
                   onClick={handleGroundingSearch}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 bg-violet-500 text-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-2xl shadow-violet-500/30"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 bg-pink-500 text-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-2xl shadow-pink-500/30"
                 >
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth={3}/></svg>
                 </button>
@@ -100,12 +104,12 @@ const IntelligenceLab: React.FC = () => {
           <div className="bg-black/60 rounded-[5rem] border border-white/10 p-16 min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl">
             {isAnalyzing ? (
               <div className="flex-grow flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mb-10 shadow-[0_0_30px_rgba(139,92,246,0.3)]"></div>
+                <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mb-10 shadow-[0_0_30px_rgba(236,72,153,0.3)]"></div>
                 <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.5em] animate-pulse">Grounding Neural Node...</p>
               </div>
             ) : analysisResult ? (
               <div className="flex-grow animate-fadeIn overflow-y-auto space-y-10 custom-scrollbar pr-4">
-                 <h4 className="text-[12px] font-black text-violet-400 uppercase tracking-[0.6em] mb-8 border-b border-white/5 pb-4">Intelligence Manifesto</h4>
+                 <h4 className="text-[12px] font-black text-pink-400 uppercase tracking-[0.6em] mb-8 border-b border-white/5 pb-4">Intelligence Manifesto</h4>
                  <div className="text-slate-300 text-lg leading-relaxed font-light whitespace-pre-wrap prose prose-invert max-w-none">{analysisResult}</div>
                  
                  {urls.length > 0 && (
@@ -113,7 +117,7 @@ const IntelligenceLab: React.FC = () => {
                      <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-6">Source Matrix</p>
                      <div className="space-y-4">
                        {urls.map((u, i) => u.web && (
-                         <a key={i} href={u.web.uri} target="_blank" className="flex items-center justify-between p-6 bg-white/5 rounded-2xl text-[11px] hover:text-violet-400 transition-all border border-transparent hover:border-violet-500/30 group">
+                         <a key={i} href={u.web.uri} target="_blank" className="flex items-center justify-between p-6 bg-white/5 rounded-2xl text-[11px] hover:text-pink-400 transition-all border border-transparent hover:border-pink-500/30 group">
                            <span className="font-bold uppercase tracking-widest">{u.web.title}</span>
                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" strokeWidth={3}/></svg>
                          </a>
@@ -129,7 +133,7 @@ const IntelligenceLab: React.FC = () => {
               </div>
             )}
             
-            <div className="absolute top-0 right-0 w-48 h-48 bg-violet-500/5 rounded-full -mr-24 -mt-24 blur-[80px]"></div>
+            <div className="absolute top-0 right-0 w-48 h-48 bg-pink-500/5 rounded-full -mr-24 -mt-24 blur-[80px]"></div>
           </div>
         </div>
       </div>
