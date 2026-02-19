@@ -28,9 +28,24 @@ const CourseList = ({ onUpgrade, isNexus }: CourseListProps) => {
           amount: Math.round(priceNum * 100),
           currency: 'USD',
           ref: 'AXIS-SYNC-' + Math.floor((Math.random() * 10000000) + 1),
-          callback: () => {
+          callback: async () => {
             if (onUpgrade) onUpgrade();
-            // In production, your backend would now call Resend to send a "Welcome to Elite" email
+            
+            // Call our new backend to send the welcome email
+            try {
+              await fetch('/api/send-welcome', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: 'billing@axiscreatorhub.com', // In real app, use user's email
+                  name: 'AXIS Creator',
+                  plan: course.title
+                })
+              });
+            } catch (e) {
+              console.error("Failed to send welcome email:", e);
+            }
+
             alert('Nexus Sync Successful. Check your email for onboarding docs.');
             window.location.hash = 'hub';
           },
