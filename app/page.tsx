@@ -1,17 +1,20 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import CreatorStudio from './components/CreatorStudio';
-import IntelligenceLab from './components/IntelligenceLab';
-import AcademyPortal from './components/AcademyPortal';
-import StrategyConsultant from './components/StrategyConsultant';
-import VSL from './components/VSL';
-import AboutUs from './components/AboutUs';
-import CourseList from './components/CourseList';
-import Footer from './components/Footer';
-import MobileNav from './components/MobileNav';
-import SalesNotification from './components/SalesNotification';
-import Logo from './components/Logo';
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import CreatorStudio from '@/components/CreatorStudio';
+import AIContentFactory from '@/components/AIContentFactory';
+import IntelligenceLab from '@/components/IntelligenceLab';
+import AcademyPortal from '@/components/AcademyPortal';
+import StrategyConsultant from '@/components/StrategyConsultant';
+import VSL from '@/components/VSL';
+import AboutUs from '@/components/AboutUs';
+import CourseList from '@/components/CourseList';
+import Footer from '@/components/Footer';
+import MobileNav from '@/components/MobileNav';
+import SalesNotification from '@/components/SalesNotification';
+import Logo from '@/components/Logo';
 
 const LeadCapture: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -23,14 +26,12 @@ const LeadCapture: React.FC = () => {
     if (!email || isSubmitting) return;
     
     setIsSubmitting(true);
-    // Mimicking AXIS x Resend Marketing Node on Vercel
     try {
-      // Logic for hitting your /api/subscribe or /api/send endpoint
       await new Promise(r => setTimeout(r, 1500));
       setSubscribed(true);
       setEmail('');
       setTimeout(() => setSubscribed(false), 8000);
-    } catch {
+    } catch (err) {
       alert("Relay error. Please check connection.");
     } finally {
       setIsSubmitting(false);
@@ -73,10 +74,15 @@ const LeadCapture: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
-  const [isNexus, setIsNexus] = useState(() => localStorage.getItem('axis_nexus_active') === 'true');
+export default function Home() {
+  const [isNexus, setIsNexus] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [bootProgress, setBootProgress] = useState(0);
+
+  useEffect(() => {
+    const active = localStorage.getItem('axis_nexus_active') === 'true';
+    setIsNexus(active);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('axis_nexus_active', isNexus.toString());
@@ -137,6 +143,7 @@ const App: React.FC = () => {
         <div className="px-safe relative z-10">
           <VSL />
           <AboutUs />
+          <AIContentFactory />
           <CreatorStudio isNexus={isNexus} />
           <CourseList onUpgrade={() => setIsNexus(true)} isNexus={isNexus} />
           <LeadCapture />
@@ -152,20 +159,6 @@ const App: React.FC = () => {
       <StrategyConsultant />
       <MobileNav />
       <SalesNotification />
-
-      <style>{`
-        * { -webkit-tap-highlight-color: transparent; }
-        html { scroll-behavior: smooth; overscroll-behavior-y: contain; }
-        ::-webkit-scrollbar { display: none; }
-        .pt-safe { padding-top: env(safe-area-inset-top); }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
-        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-      `}</style>
     </div>
   );
-};
-
-export default App;
+}

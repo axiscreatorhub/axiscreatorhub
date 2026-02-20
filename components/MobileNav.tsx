@@ -5,6 +5,12 @@ const MobileNav: React.FC = () => {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-[120] px-4 pb-4">
       <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl flex items-center justify-around py-4 px-6">
+        <a href="#content-factory" className="flex flex-col items-center gap-1 group">
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-all group-active:scale-90 bg-white/5 text-white">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </div>
+          <span className="text-[8px] font-black uppercase tracking-widest text-white/40">Content</span>
+        </a>
         <a href="#hub" className="flex flex-col items-center gap-1 group">
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-all group-active:scale-90 bg-white/5 text-white">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth={2.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>

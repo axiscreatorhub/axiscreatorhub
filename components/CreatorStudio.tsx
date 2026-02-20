@@ -78,9 +78,20 @@ const CreatorStudio: React.FC<{ isNexus?: boolean }> = ({ isNexus = false }) => 
     setIsProcessing(true);
     setResult(null);
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
     
     try {
+      // Check entitlements and increment usage before starting
+      const checkRes = await fetch('/api/entitlements/check', {
+        method: 'POST',
+        body: JSON.stringify({ type: activeTab === 'video' ? 'video' : 'image' })
+      });
+      
+      if (!checkRes.ok) {
+        const err = await checkRes.text();
+        throw new Error(err);
+      }
+
       if (activeTab === 'video') {
         let op = await ai.models.generateVideos({
           model: 'veo-3.1-fast-generate-preview',

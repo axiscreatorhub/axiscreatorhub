@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --axis-violet: #8b5cf6;
+  --axis-pink: #f472b6;
+  --axis-obsidian: #020617;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--axis-obsidian);
+  color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+.outfit { font-family: 'Outfit', sans-serif; }
+
+.text-gradient { 
+  background: linear-gradient(135deg, #f472b6 0%, #8b5cf6 50%, #6366f1 100%); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+}
+
+::-webkit-scrollbar { display: none; }
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lifestyle-badge {
+  background: linear-gradient(90deg, rgba(244, 114, 182, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+* { -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; overscroll-behavior-y: contain; }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
+@keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }

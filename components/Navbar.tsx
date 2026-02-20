@@ -12,6 +12,7 @@ const Navbar: React.FC = () => {
           
           <div className="hidden md:flex items-center gap-10">
             {[
+              { label: 'Content Factory', id: 'content-factory' },
               { label: 'Creator Studio', id: 'hub' },
               { label: 'Masterclass', id: 'academy' },
               { label: 'Intel Lab', id: 'intelligence' }
