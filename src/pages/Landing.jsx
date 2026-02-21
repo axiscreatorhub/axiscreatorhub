@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { 
@@ -20,23 +19,23 @@ const Landing = () => {
   const features = [
     {
       icon: <Zap className="w-6 h-6 text-pink-500" />,
-      title: "Viral Hook Engine",
-      description: "Generate scroll-stopping hooks tailored to your niche in seconds using advanced AI."
+      title: "Viral Script Engine",
+      description: "Generate scroll-stopping hooks and full scripts for Reels and TikToks in seconds."
     },
     {
       icon: <Layout className="w-6 h-6 text-violet-500" />,
-      title: "Content OS",
-      description: "A unified operating system to manage your Reels, Shorts, and Brand Deals without the chaos."
+      title: "Creator GPT",
+      description: "A strategic AI partner that understands the algorithm and helps you plan your next move."
     },
     {
       icon: <TrendingUp className="w-6 h-6 text-emerald-500" />,
-      title: "Performance Analytics",
-      description: "Track what works and scale your brand identity with data-driven insights."
+      title: "Side Hustle to Pro",
+      description: "Tools designed to take you from a part-time creator to a full-time influencer."
     },
     {
       icon: <Shield className="w-6 h-6 text-blue-500" />,
-      title: "Brand Deal Tracker",
-      description: "Manage sponsorships, deliverables, and payments in one professional interface."
+      title: "Monetization OS",
+      description: "Manage brand deals, sponsorship pitches, and revenue streams in one place."
     }
   ];
 
@@ -88,7 +87,7 @@ const Landing = () => {
             className="text-6xl md:text-8xl font-extrabold tracking-tighter outfit mb-8 leading-[0.9]"
           >
             SCALE YOUR <br />
-            <span className="text-gradient">CREATOR BRAND</span>
+            <span className="text-gradient">CREATOR CAREER</span>
           </motion.h1>
 
           <motion.p 
@@ -97,7 +96,7 @@ const Landing = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed"
           >
-            Stop guessing. Start growing. AXIS is the premium operating system for modern creators who want to automate their workflow and dominate the algorithm.
+            From side hustle to full-time influencer. AXIS is the ultimate AI-powered Creator OS designed to help you dominate Instagram, TikTok, and YouTube with ease and excellence.
           </motion.p>
 
           <motion.div 
@@ -143,7 +142,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold outfit mb-4">Everything you need to <span className="text-pink-500">win</span>.</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Built by creators, for creators. We've removed the friction so you can focus on what matters: the content.</p>
+            <p className="text-slate-400 max-w-xl mx-auto">Built by creators, for creators. We&apos;ve removed the friction so you can focus on what matters: the content.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -186,7 +185,7 @@ const Landing = () => {
               </div>
               <span className="text-xl font-bold tracking-tighter outfit">AXIS</span>
             </div>
-            <p className="text-slate-500 max-w-xs leading-relaxed">The premium operating system for modern creators. Built in South Africa, scaling globally.</p>
+            <p className="text-slate-500 max-w-xs leading-relaxed">The ultimate AI-powered Creator OS. Built for the next generation of influencers.</p>
           </div>
           <div>
             <h4 className="font-bold mb-6">Product</h4>

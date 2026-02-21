@@ -10,7 +10,7 @@ import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 import { Resend } from 'resend';
 import Paystack from 'paystack-node';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
 
@@ -21,7 +21,7 @@ const __dirname = path.dirname(__filename);
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 const paystack = new Paystack(process.env.PAYSTACK_SECRET || '', 'production');
 
 async function startServer() {
@@ -58,6 +58,23 @@ async function startServer() {
     niche: z.string().min(2),
     topic: z.string().min(5),
     tone: z.enum(['bold', 'friendly', 'professional', 'luxury', 'funny'])
+  });
+
+  const chatSchema = z.object({
+    message: z.string().min(1),
+    context: z.record(z.any()).optional()
+  });
+
+  const imageGenSchema = z.object({
+    prompt: z.string().min(5),
+    aspectRatio: z.enum(['1:1', '16:9', '9:16', '4:3', '3:4']).default('1:1')
+  });
+
+  const marketplaceSchema = z.object({
+    title: z.string().min(5),
+    description: z.string().min(10),
+    price: z.number().min(1),
+    contentId: z.string()
   });
 
   // --- Auth Middleware ---
@@ -164,6 +181,73 @@ async function startServer() {
     res.json(req.user);
   });
 
+  app.post('/api/ai/chat', authenticate, genLimiter, async (req: any, res) => {
+    try {
+      const { message, context } = chatSchema.parse(req.body);
+      const user = req.user;
+
+      const systemInstruction = `
+        You are the AXIS Creator OS AI, the ultimate assistant for social media influencers and creators.
+        Your goal is to help users scale their brand on Instagram, TikTok, Facebook, and YouTube.
+        Focus on:
+        - Viral hooks and scroll-stopping scripts.
+        - Strategic content planning.
+        - Monetization strategies (side hustle to full-time).
+        - Creative excellence and ease of production.
+        
+        User Context: ${JSON.stringify(context || {})}
+        User Plan: ${user.plan}
+      `;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `${systemInstruction}\n\nUser: ${message}`,
+      });
+
+      res.json({ text: response.text });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  app.post('/api/ai/generate-image', authenticate, genLimiter, async (req: any, res) => {
+    try {
+      const user = req.user;
+
+      // Check credits (Assuming credits field exists or using usageCount as proxy for now)
+      // In a real app, we'd check user.credits
+      if (user.plan === 'Starter' && user.usageCount >= 10) {
+        return res.status(403).json({ message: 'Insufficient credits. Please upgrade or buy more.' });
+      }
+
+      const { prompt, aspectRatio } = imageGenSchema.parse(req.body);
+      
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: [{ text: `A high-end, aesthetic creator asset for social media: ${prompt}` }],
+        config: {
+          imageConfig: {
+            aspectRatio: aspectRatio as any
+          }
+        }
+      });
+
+      let imageUrl = '';
+      for (const part of response.candidates?.[0]?.content?.parts || []) {
+        if (part.inlineData) {
+          imageUrl = `data:image/png;base64,${part.inlineData.data}`;
+          break;
+        }
+      }
+
+      if (!imageUrl) throw new Error('No image generated');
+
+      res.json({ imageUrl });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
   app.post('/api/ai/generate', authenticate, genLimiter, async (req: any, res) => {
     try {
       const { goal, niche, topic, tone } = generateSchema.parse(req.body);
@@ -173,8 +257,6 @@ async function startServer() {
         return res.status(403).json({ message: 'Usage limit reached for Starter plan. Please upgrade to Pro.' });
       }
 
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      
       const prompt = `
         You are an expert content creator assistant for AXIS Creator Hub.
         Generate a high-converting ${goal} for the ${niche} niche.
@@ -186,15 +268,18 @@ async function startServer() {
         - Include "hook" (string), "body_points" (array of strings), and "call_to_action" (string).
         - Ensure the content is engaging, viral-ready, and fits the specified tone.
         - Do not include any markdown formatting or extra text.
+        - Do not include any backticks or "json" prefix.
       `;
 
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
-      
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Failed to generate valid content structure');
-      
-      const content = JSON.parse(jsonMatch[0]);
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json'
+        }
+      });
+
+      const content = JSON.parse(response.text || '{}');
 
       // Store content and increment usage
       await prisma.$transaction([
@@ -269,6 +354,61 @@ async function startServer() {
     }
 
     res.sendStatus(400);
+  });
+
+  app.post('/api/marketplace/list', authenticate, async (req: any, res) => {
+    try {
+      marketplaceSchema.parse(req.body);
+
+      // In a real app, we'd create a MarketplaceItem record
+      // For now, we'll simulate the success
+      res.json({ message: 'Item listed successfully in the AXIS Marketplace' });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  app.get('/api/marketplace/items', async (req, res) => {
+    // Mocking marketplace items for the demo
+    const items = [
+      { id: '1', title: 'Viral Tech Unboxing Script', description: 'Used for a video with 1.2M views. High retention.', price: 5, author: 'TechGuru' },
+      { id: '2', title: 'Luxury Lifestyle Reel Hook', description: 'Perfect for travel and high-end niches.', price: 3, author: 'JetSetter' },
+      { id: '3', title: 'Productivity Hack Template', description: 'Minimalist aesthetic, proven engagement.', price: 4, author: 'FocusFlow' }
+    ];
+    res.json(items);
+  });
+
+  app.post('/api/billing/credits/buy', authenticate, async (req: any, res) => {
+    try {
+      const { amount } = req.body; // e.g., 100 credits
+      // Initialize Paystack transaction for credits
+      const response = await paystack.transaction.initialize({
+        email: req.user.email,
+        amount: amount * 100, // $1 per credit for example
+        callback_url: process.env.PAYSTACK_CALLBACK_URL,
+        metadata: { type: 'credits', amount, userId: req.user.id }
+      });
+      res.json(response.data);
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  app.delete('/api/me', authenticate, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      
+      // Delete all user data
+      await prisma.$transaction([
+        prisma.session.deleteMany({ where: { userId } }),
+        prisma.content.deleteMany({ where: { userId } }),
+        prisma.user.delete({ where: { id: userId } })
+      ]);
+
+      res.json({ message: 'Account deleted successfully' });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
   });
 
   // --- Vite Middleware for Dev ---

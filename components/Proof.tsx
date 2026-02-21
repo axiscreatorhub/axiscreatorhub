@@ -41,7 +41,7 @@ const Proof: React.FC = () => {
                   <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">{t.role}</p>
                 </div>
               </div>
-              <p className="text-slate-500 italic leading-relaxed text-sm font-light">"{t.content}"</p>
+              <p className="text-slate-500 italic leading-relaxed text-sm font-light">&quot;{t.content}&quot;</p>
             </div>
           ))}
         </div>

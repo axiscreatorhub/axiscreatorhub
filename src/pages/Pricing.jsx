@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -166,7 +165,7 @@ const Pricing = () => {
 
           <div className="max-w-2xl mx-auto space-y-4">
             <p className="text-slate-500 text-sm italic">
-              * All plans support "Cancel Anytime". We believe in providing value, not trapping you in contracts.
+              * All plans support &quot;Cancel Anytime&quot;. We believe in providing value, not trapping you in contracts.
             </p>
             <p className="text-slate-400 text-xs">
               Prices are shown in placeholder format (R___). Final pricing will be determined based on your region and local currency at checkout.

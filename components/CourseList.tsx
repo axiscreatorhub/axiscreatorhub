@@ -12,7 +12,7 @@ const CourseList = ({ onUpgrade, isNexus }: CourseListProps) => {
 
   const handleActivate = async (course: Course) => {
     if (course.id === 'trial') {
-      window.location.hash = 'hub';
+      window.location.assign('#hub');
       return;
     }
 
@@ -47,7 +47,7 @@ const CourseList = ({ onUpgrade, isNexus }: CourseListProps) => {
             }
 
             alert('Nexus Sync Successful. Check your email for onboarding docs.');
-            window.location.hash = 'hub';
+            window.location.assign('#hub');
           },
           onClose: () => setLoadingPlan(null)
         });

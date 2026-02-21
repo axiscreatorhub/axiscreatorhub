@@ -35,7 +35,7 @@ const StoreReadiness: React.FC = () => {
                 <h4 className="text-sm font-black text-white uppercase tracking-widest">Protocol: Vercel Re-Sync</h4>
               </div>
               <p className="text-[11px] text-violet-200/80 mb-10 leading-relaxed font-bold">
-                Run this command to force a new build on Vercel. This often clears "DEPLOYMENT_NOT_FOUND" by refreshing the deployment metadata and AXIS branding nodes.
+                Run this command to force a new build on Vercel. This often clears &quot;DEPLOYMENT_NOT_FOUND&quot; by refreshing the deployment metadata and AXIS branding nodes.
               </p>
               <div className="bg-black/60 p-6 rounded-2xl border border-violet-500/20 text-[9px] font-mono text-violet-400 leading-relaxed break-all mb-10 h-20 overflow-y-auto">
                 {repairScript}
@@ -57,7 +57,7 @@ const StoreReadiness: React.FC = () => {
                 <h4 className="text-sm font-black text-white uppercase tracking-widest">Troubleshooting Flow</h4>
               </div>
               <p className="text-[11px] text-slate-400 mb-10 leading-relaxed">
-                If the error persists, check that your Vercel Project Name is exactly <strong>"axiscreatorhub"</strong>. Ensure a production deployment has finished successfully.
+                If the error persists, check that your Vercel Project Name is exactly <strong>&quot;axiscreatorhub&quot;</strong>. Ensure a production deployment has finished successfully.
               </p>
               <div className="bg-black/60 p-6 rounded-2xl border border-white/5 mb-10">
                 <div className="flex flex-col gap-2">

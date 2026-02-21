@@ -1,6 +1,4 @@
 // src/pages/Privacy.jsx
-import React from 'react';
-
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans py-20 px-6">
@@ -20,20 +18,27 @@ const Privacy = () => {
           <ul className="list-disc pl-6 space-y-2 text-slate-700">
             <li><strong>Account Data:</strong> Email address, name, and profile information.</li>
             <li><strong>Usage Data:</strong> Information on how you interact with our AI tools and dashboard.</li>
-            <li><strong>Connected Accounts:</strong> Metadata from social media accounts you choose to link via OAuth.</li>
+            <li><strong>AI Inputs:</strong> The text and prompts you provide to our AI engines.</li>
             <li><strong>Payment Data:</strong> Processed securely via Paystack or LemonSqueezy; we do not store your full card details.</li>
           </ul>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">3. How We Use Your Data</h2>
+          <h2 className="text-2xl font-bold mb-4">3. AI Data Processing</h2>
+          <p className="leading-relaxed text-slate-700">
+            AXIS uses advanced AI models (such as Google Gemini) to process your inputs and generate content. While we do not use your personal data to train public models without explicit consent, your inputs are processed by third-party providers to deliver the Service. By using AXIS, you acknowledge and agree to this processing.
+          </p>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">4. How We Use Your Data</h2>
           <p className="leading-relaxed text-slate-700">
             We use your data to provide the Service, process payments, improve our AI models (anonymized), and communicate important updates. We do not sell your personal data to third parties.
           </p>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">4. Your Rights (POPIA & GDPR)</h2>
+          <h2 className="text-2xl font-bold mb-4">5. Your Rights (POPIA & GDPR)</h2>
           <p className="leading-relaxed text-slate-700 mb-4">
             Regardless of where you live, we provide the following rights to all users:
           </p>
@@ -46,21 +51,21 @@ const Privacy = () => {
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">5. Data Security</h2>
+          <h2 className="text-2xl font-bold mb-4">6. Data Security</h2>
           <p className="leading-relaxed text-slate-700">
             We implement industry-standard security measures, including encryption and secure server protocols, to protect your information from unauthorized access or disclosure.
           </p>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">6. Cookies</h2>
+          <h2 className="text-2xl font-bold mb-4">7. Cookies</h2>
           <p className="leading-relaxed text-slate-700">
             We use essential cookies to maintain your session and remember your preferences. You can disable cookies in your browser, but some parts of AXIS may stop working.
           </p>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">7. Contact Us</h2>
+          <h2 className="text-2xl font-bold mb-4">8. Contact Us</h2>
           <p className="leading-relaxed text-slate-700">
             If you have questions about your data or wish to exercise your rights, please contact our Information Officer through the support channels in your dashboard.
           </p>

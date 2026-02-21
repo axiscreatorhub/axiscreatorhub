@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Rocket, Mail, Lock, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { Rocket, Mail, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 
 const Login = () => {
   const [step, setStep] = useState(1); // 1: Request, 2: Verify

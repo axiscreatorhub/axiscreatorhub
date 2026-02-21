@@ -1,6 +1,4 @@
 // src/pages/Terms.jsx
-import React from 'react';
-
 const Terms = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans py-20 px-6">
@@ -11,16 +9,16 @@ const Terms = () => {
         <section className="mb-10">
           <h2 className="text-2xl font-bold mb-4">1. Acceptance of Terms</h2>
           <p className="leading-relaxed text-slate-700">
-            By using AXIS Creator Hub ("the Service"), you agree to these terms. If you do not agree, please do not use our platform. We provide tools for content organization and AI-assisted generation for creators.
+            By using AXIS Creator Hub (&quot;the Service&quot;), you agree to these terms. If you do not agree, please do not use our platform. We provide tools for content organization and AI-assisted generation for creators.
           </p>
         </section>
 
         <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">2. AI Content Disclaimer</h2>
+          <h2 className="text-2xl font-bold mb-4">2. AI Content & Liability</h2>
           <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-xl mb-4">
-            <p className="font-bold text-amber-900 mb-2">Important Notice:</p>
+            <p className="font-bold text-amber-900 mb-2">Legal Disclaimer:</p>
             <p className="text-amber-800 leading-relaxed">
-              AXIS uses artificial intelligence to generate content ideas, scripts, and hooks. This content is <strong>not legal, financial, or professional advice</strong>. You are solely responsible for reviewing, editing, and verifying any AI-generated output before publishing. We do not guarantee the accuracy, safety, or legality of generated content.
+              AXIS uses artificial intelligence to generate content. This content is provided for creative inspiration only and does not constitute professional, legal, or financial advice. AXIS is not responsible for any copyright infringements, social media bans, or legal issues arising from the use of AI-generated content. You are solely responsible for verifying the accuracy and legality of all output.
             </p>
           </div>
         </section>
@@ -45,7 +43,7 @@ const Terms = () => {
         <section className="mb-10">
           <h2 className="text-2xl font-bold mb-4">5. Limitation of Liability</h2>
           <p className="leading-relaxed text-slate-700">
-            AXIS is provided "as is". We are not liable for any damages resulting from your use of the Service, including but not limited to loss of data, social media account bans, or content disputes.
+            AXIS is provided &quot;as is&quot;. We are not liable for any damages resulting from your use of the Service, including but not limited to loss of data, social media account bans, or content disputes.
           </p>
         </section>
 

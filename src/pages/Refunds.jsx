@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Refunds = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans py-20 px-6">
@@ -10,7 +8,7 @@ const Refunds = () => {
         <section className="mb-10">
           <h2 className="text-2xl font-bold mb-4">1. Cancellation</h2>
           <p className="leading-relaxed text-slate-700">
-            You can cancel your AXIS subscription at any time directly from your dashboard. Once cancelled, you will continue to have access to your plan's features until the end of your current billing cycle. No further charges will be made.
+            You can cancel your AXIS subscription at any time directly from your dashboard. Once cancelled, you will continue to have access to your plan&apos;s features until the end of your current billing cycle. No further charges will be made.
           </p>
         </section>
 
