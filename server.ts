@@ -1,5 +1,4 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -26,8 +25,7 @@ async function startServer() {
   const paystack = new Paystack(process.env.PAYSTACK_SECRET || '', 'production');
 
   const app = express();
-  // Use process.env.PORT if provided (e.g. in deployment), otherwise default to 3000 as per sandbox instructions
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT || 8080);
 
   // --- Middleware ---
   app.use(helmet({
@@ -106,8 +104,7 @@ async function startServer() {
   const genLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 20,
-    message: { message: 'Too many generation requests, please try again later.' },
-    keyGenerator: (req: any) => req.user?.email || req.ip
+    message: { message: 'Too many generation requests, please try again later.' }
   });
 
   // --- API Routes ---
@@ -420,6 +417,7 @@ async function startServer() {
 
   // --- Vite Middleware for Dev ---
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
@@ -428,7 +426,7 @@ async function startServer() {
   } else {
     // Serve static files in production
     app.use(express.static(path.join(__dirname, 'dist')));
-    app.get('*', (req, res) => {
+    app.get('/*', (req, res) => {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
