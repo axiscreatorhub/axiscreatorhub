@@ -1,9 +1,10 @@
 {
   "name": "AXIS Creator Hub",
-  "description": "The elite AI-driven operating system for modern creators. Build your faceless empire with high-fidelity AI content and strategic intelligence.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone",
-    "geolocation"
-  ]
+  "short_name": "AXIS",
+  "description": "The premium operating system for modern creators. Batch viral hooks, generate aesthetic assets, and scale your brand identity.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#8b5cf6",
+  "requestFramePermissions": []
 }
