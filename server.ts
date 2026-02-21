@@ -19,13 +19,14 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const prisma = new PrismaClient();
-const resend = new Resend(process.env.RESEND_API_KEY);
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-const paystack = new Paystack(process.env.PAYSTACK_SECRET || '', 'production');
-
 async function startServer() {
+  const prisma = new PrismaClient();
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+  const paystack = new Paystack(process.env.PAYSTACK_SECRET || '', 'production');
+
   const app = express();
+  // Use process.env.PORT if provided (e.g. in deployment), otherwise default to 3000 as per sandbox instructions
   const PORT = process.env.PORT || 3000;
 
   // --- Middleware ---
@@ -356,6 +357,12 @@ async function startServer() {
     res.sendStatus(400);
   });
 
+  app.get('/api/billing/paystack/callback', async (req, res) => {
+    // Paystack redirects here after payment. 
+    // The webhook handles the actual database update.
+    res.redirect('/dashboard');
+  });
+
   app.post('/api/marketplace/list', authenticate, async (req: any, res) => {
     try {
       marketplaceSchema.parse(req.body);
@@ -426,7 +433,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
