@@ -45,12 +45,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules ./node_modules
 
 # Expose the port
-EXPOSE 8080
+EXPOSE 3000
 
 # Start the application
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-CMD ["npm","start"]
+CMD ["npm", "start"]
