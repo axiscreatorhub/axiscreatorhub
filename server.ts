@@ -31,7 +31,10 @@ async function startServer() {
   app.use(helmet({
     contentSecurityPolicy: false, // Disable for dev/vite
   }));
-  app.use(cors());
+  app.use(cors({
+    origin: process.env.VITE_API_URL ? process.env.VITE_API_URL.split(',') : '*',
+    credentials: true,
+  }));
   app.use(morgan('dev'));
   
   // Capture raw body for Paystack webhook verification

@@ -6,6 +6,10 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 
 WORKDIR /app
 
+# Declare build argument for VITE_API_URL
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files and prisma schema
 COPY package*.json ./
 COPY prisma ./prisma/
