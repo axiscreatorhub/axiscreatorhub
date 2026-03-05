@@ -1,0 +1,17 @@
+node_modules/
+build/
+dist/
+out/
+.next/
+android/
+ios/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Capacitor
+capacitor.config.json
+capacitor.config.js
+capacitor.config.ts.bak

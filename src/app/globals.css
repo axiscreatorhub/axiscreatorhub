@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-purple: #833ab4;
+  --color-brand-pink: #fd1d1d;
+  --color-brand-orange: #fcb045;
+  --color-brand-blue: #405de6;
+  --color-brand-navy: #1a1a2e;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0a0a12] text-white selection:bg-brand-purple/30 antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-[20px] border border-white/[0.1] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)];
+  }
+  
+  .btn-primary {
+    @apply px-8 py-4 rounded-full bg-gradient-to-r from-brand-blue via-brand-purple to-brand-pink text-white font-semibold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg shadow-brand-purple/20;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-blue via-brand-purple to-brand-orange;
+  }
+}

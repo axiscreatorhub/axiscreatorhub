@@ -1,0 +1,23 @@
+{
+  "name": "AXIS Creator Hub",
+  "short_name": "AXIS",
+  "description": "The AI-Powered Operating System for Modern Creators.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/axis/192/192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://picsum.photos/seed/axis/512/512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

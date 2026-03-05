@@ -1,0 +1,9 @@
+{
+  "name": "Remix: AXIS Creator Hub AI",
+  "description": "The AI-Powered Operating System for Modern Creators. Optimized for Vercel with Clerk Auth and Resend Email integration.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

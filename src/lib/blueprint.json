@@ -1,0 +1,91 @@
+{
+  "product_name": "AXIS Creator Hub AI",
+  "vision": "The world's first AI-native operating system for the creator economy.",
+  "roadmap": [
+    {
+      "id": "FEAT-001",
+      "title": "AI Content Engine (V1)",
+      "description": "Integration with Gemini 3.1 Pro for multi-modal content generation including hooks, scripts, and captions.",
+      "dependencies": ["Google Gemini API"],
+      "priority": "P0",
+      "estimated_effort": "2 weeks",
+      "revenue_potential": "High (Core Value)"
+    },
+    {
+      "id": "FEAT-002",
+      "title": "Visual Studio (Firefly Integration)",
+      "description": "Direct integration with Adobe Firefly and Canva API for automated graphic generation based on brand kit.",
+      "dependencies": ["Adobe Firefly SDK", "Canva API"],
+      "priority": "P0",
+      "estimated_effort": "4 weeks",
+      "revenue_potential": "High (Upsell)"
+    },
+    {
+      "id": "FEAT-003",
+      "title": "Video Lab (AI Synthesis)",
+      "description": "AI-powered video editing modules for auto-captioning, B-roll generation, and AI voiceovers using Veo and ElevenLabs.",
+      "dependencies": ["Veo API", "ElevenLabs SDK"],
+      "priority": "P1",
+      "estimated_effort": "6 weeks",
+      "revenue_potential": "Very High (Pro Feature)"
+    },
+    {
+      "id": "FEAT-004",
+      "title": "Multi-Platform Scheduler",
+      "description": "Unified dashboard to schedule and publish content across Instagram, TikTok, YouTube, and X.",
+      "dependencies": ["Meta Graph API", "TikTok for Developers API"],
+      "priority": "P1",
+      "estimated_effort": "5 weeks",
+      "revenue_potential": "Medium (Retention)"
+    },
+    {
+      "id": "FEAT-005",
+      "title": "Creator Analytics Pro",
+      "description": "Deep-dive analytics with AI insights on audience sentiment and best posting times.",
+      "dependencies": ["Social Platform APIs", "Python Data Science Stack"],
+      "priority": "P2",
+      "estimated_effort": "4 weeks",
+      "revenue_potential": "Medium (Pro Feature)"
+    },
+    {
+      "id": "FEAT-006",
+      "title": "Brand Outreach CRM",
+      "description": "Automated brand deal tracking and AI-crafted pitch generation with integrated email tracking.",
+      "dependencies": ["Resend API", "Stripe API"],
+      "priority": "P2",
+      "estimated_effort": "3 weeks",
+      "revenue_potential": "High (Enterprise)"
+    }
+  ],
+  "tiered_structure": {
+    "free": {
+      "price": "$0",
+      "features": ["Basic AI Hook Gen (10/mo)", "Static Media Kit", "Manual Posting", "Community Access"]
+    },
+    "pro": {
+      "price": "$29/mo",
+      "features": ["Unlimited AI Content", "Visual Studio Access", "Auto-Scheduler", "Advanced Analytics", "Priority Support"]
+    },
+    "enterprise": {
+      "price": "Custom",
+      "features": ["Team Collaboration", "Custom AI Fine-tuning", "White-label Media Kits", "API Access", "Dedicated Manager"]
+    }
+  },
+  "system_architecture": {
+    "frontend": "Next.js 15 (App Router), Tailwind v4, Framer Motion",
+    "backend": "Node.js (Edge Functions), Prisma ORM, PostgreSQL (Supabase)",
+    "ai_layer": "Google Gemini 3.1 (Text/Audio), Adobe Firefly (Images), Veo (Video)",
+    "infrastructure": "Vercel (Hosting), Resend (Email), Stripe (Billing), Clerk (Auth)"
+  },
+  "monetization_strategy": [
+    "SaaS Subscription (Tiered)",
+    "AI Credit Top-ups (Pay-as-you-go for high-res video)",
+    "Marketplace Commission (Brand Deal Escrow)",
+    "Premium Brand Kit Templates"
+  ],
+  "go_to_market": {
+    "mvp_launch": "Focus on AI Hook Gen + Media Kits for Instagram Creators.",
+    "scaling": "Partner with Creator Agencies and implement a referral loop (Free credits for invites).",
+    "retention": "Weekly AI-generated trend reports and community challenges."
+  }
+}
