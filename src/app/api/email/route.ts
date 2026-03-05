@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: "AXIS Creator Hub <onboarding@resend.dev>", // Replace with verified domain
+      from: process.env.EMAIL_FROM || "AXIS Creator Hub <onboarding@resend.dev>",
       to,
       subject,
       html,

@@ -25,10 +25,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_Y2xlcmstYnVpbGQtZHVtbXktMTIzNDU2Nzg5MA==';
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_aW5mb3JtZWQtb3dsLTUzLmNsZXJrLmFjY291bnRzLmRldiQ';
+  const domain = process.env.NEXT_PUBLIC_CLERK_DOMAIN;
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider publishableKey={publishableKey} domain={domain}>
       <html lang="en" suppressHydrationWarning className={`${inter.variable} ${outfit.variable}`}>
         <body className="antialiased font-sans bg-[#0a0a12] text-white">
           <Providers>

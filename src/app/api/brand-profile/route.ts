@@ -23,17 +23,18 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { userId: clerkId } = await auth();
+    const { userId: clerkId, sessionClaims } = await auth();
     if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
 
+    const email = (sessionClaims?.email as string) || "";
     const { name, tone, niche, audience, bio } = await req.json();
 
     const user = await prisma.user.upsert({
       where: { clerkId },
-      update: {},
+      update: { email },
       create: {
         clerkId,
-        email: "", // Should be fetched from Clerk if needed
+        email,
       },
     });
 
