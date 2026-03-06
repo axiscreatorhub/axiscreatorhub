@@ -19,6 +19,7 @@ export function ImageGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [jobs, setJobs] = useState<AssetJob[]>([]);
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchJobs() {
@@ -40,6 +41,7 @@ export function ImageGenerator() {
   const handleGenerate = async () => {
     if (!prompt.trim() || isGenerating) return;
     setIsGenerating(true);
+    setError(null);
 
     try {
       const res = await fetch('/api/ai/image', {
@@ -57,12 +59,15 @@ export function ImageGenerator() {
           setJobs(dataJobs);
         }
         setPrompt('');
+      } else if (res.status === 403) {
+        const data = await res.json();
+        setError(data.message || 'Insufficient credits');
       } else {
-        throw new Error('Generation failed');
+        setError('Generation failed. Please try again.');
       }
     } catch (err) {
       console.error('Generation failed', err);
-      alert('Failed to generate image. Please check your credits.');
+      setError('An unexpected error occurred.');
     } finally {
       setIsGenerating(false);
     }
@@ -103,7 +108,17 @@ export function ImageGenerator() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-end">
+          <div className="flex flex-col justify-end gap-4">
+            {error && (
+              <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex flex-col gap-2">
+                <p>{error}</p>
+                {error.includes('credits') && (
+                  <a href="/dashboard/settings" className="text-brand-orange font-bold hover:underline">
+                    Buy Credits →
+                  </a>
+                )}
+              </div>
+            )}
             <button 
               onClick={handleGenerate}
               disabled={isGenerating || !prompt.trim()}
@@ -112,8 +127,8 @@ export function ImageGenerator() {
               {isGenerating ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
               {isGenerating ? 'Generating...' : 'Generate Image'}
             </button>
-            <p className="mt-4 text-[10px] text-zinc-500 text-center uppercase tracking-widest font-bold">
-              Uses 5 Credits per generation • Powered by Gemini 3.1
+            <p className="text-[10px] text-zinc-500 text-center uppercase tracking-widest font-bold">
+              Uses 20 Credits per generation • Powered by Gemini 3.1
             </p>
           </div>
         </div>

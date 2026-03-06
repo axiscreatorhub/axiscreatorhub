@@ -2,7 +2,7 @@ import { getGeminiModel } from "@/lib/gemini";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { deductCredits } from "@/lib/credits";
+import { requireCredits } from "@/lib/credits";
 
 export async function POST(req: Request) {
   try {
@@ -27,11 +27,18 @@ export async function POST(req: Request) {
     }
 
     // 1. Check and deduct credits
-    const creditCost = 5; // 5 credits per image generation
+    const creditCost = 20; // 20 credits per image generation
     try {
-      await deductCredits(user.id, creditCost, "IMAGE_GEN");
-    } catch (error) {
-      return new NextResponse("Insufficient credits", { status: 403 });
+      await requireCredits(user.id, creditCost, "IMAGE_GEN");
+    } catch (error: any) {
+      if (error.message === "Insufficient credits") {
+        return NextResponse.json({ 
+          error: "Insufficient credits", 
+          message: "You need 20 credits to generate images. Please top up your wallet.",
+          code: "INSUFFICIENT_CREDITS"
+        }, { status: 403 });
+      }
+      return new NextResponse("Failed to verify credits", { status: 500 });
     }
 
     // 2. Create AssetJob record

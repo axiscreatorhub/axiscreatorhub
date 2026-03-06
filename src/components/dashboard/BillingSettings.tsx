@@ -9,14 +9,11 @@ export function BillingSettings({ currentBalance }: { currentBalance: number }) 
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleTopUp = async (amount: number) => {
-    if (!user?.primaryEmailAddress?.emailAddress) return;
-    
+  const handleTopUp = async (packageId: string) => {
     setIsLoading(true);
     try {
       const response = await axios.post('/api/payments/paystack', {
-        amount,
-        email: user.primaryEmailAddress.emailAddress,
+        packageId,
       });
 
       const { authorization_url } = response.data.data;
@@ -41,25 +38,35 @@ export function BillingSettings({ currentBalance }: { currentBalance: number }) 
       <div className="space-y-4">
         <p className="text-sm text-zinc-400">Top up your credits to continue generating viral content.</p>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
-            onClick={() => handleTopUp(1000)}
+            onClick={() => handleTopUp('STARTER')}
             disabled={isLoading}
             className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-orange/50 transition-all text-center group"
           >
             <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Starter</p>
             <p className="text-lg font-black text-white">100 Credits</p>
-            <p className="text-sm text-brand-orange font-bold mt-2">₦1,000</p>
+            <p className="text-sm text-brand-orange font-bold mt-2">R100</p>
           </button>
 
           <button
-            onClick={() => handleTopUp(5000)}
+            onClick={() => handleTopUp('PRO')}
             disabled={isLoading}
             className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-orange/50 transition-all text-center group"
           >
             <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Pro</p>
             <p className="text-lg font-black text-white">600 Credits</p>
-            <p className="text-sm text-brand-orange font-bold mt-2">₦5,000</p>
+            <p className="text-sm text-brand-orange font-bold mt-2">R450</p>
+          </button>
+
+          <button
+            onClick={() => handleTopUp('BUSINESS')}
+            disabled={isLoading}
+            className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-orange/50 transition-all text-center group"
+          >
+            <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Business</p>
+            <p className="text-lg font-black text-white">1500 Credits</p>
+            <p className="text-sm text-brand-orange font-bold mt-2">R900</p>
           </button>
         </div>
 

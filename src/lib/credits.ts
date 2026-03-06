@@ -51,8 +51,33 @@ export async function deductCredits(userId: string, amount: number, feature: str
   });
 }
 
-export async function addCredits(userId: string, amount: number, type: string = 'PURCHASE') {
+/**
+ * Helper to enforce credit requirements.
+ * Throws an error if credits are insufficient.
+ */
+export async function requireCredits(userId: string, cost: number, feature: string) {
+  try {
+    return await deductCredits(userId, cost, feature);
+  } catch (error: any) {
+    if (error.message === 'Insufficient credits') {
+      throw error;
+    }
+    throw new Error('Failed to verify credits');
+  }
+}
+
+export async function addCredits(userId: string, amount: number, type: string = 'PURCHASE', reference?: string) {
   return await prisma.$transaction(async (tx) => {
+    // Check if reference already exists to prevent double crediting
+    if (reference) {
+      const existing = await tx.creditTransaction.findUnique({
+        where: { reference }
+      });
+      if (existing) {
+        throw new Error('Reference already exists');
+      }
+    }
+
     const wallet = await tx.creditWallet.upsert({
       where: { userId },
       update: {
@@ -71,6 +96,7 @@ export async function addCredits(userId: string, amount: number, type: string = 
         walletId: wallet.id,
         amount,
         type,
+        reference,
       },
     });
 

@@ -10,11 +10,13 @@ export function ScriptGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [script, setScript] = useState('');
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
     setIsGenerating(true);
     setScript('');
+    setError(null);
 
     try {
       const res = await fetch('/api/ai/write', {
@@ -30,9 +32,15 @@ export function ScriptGenerator() {
       if (res.ok) {
         const data = await res.json();
         setScript(data.text);
+      } else if (res.status === 403) {
+        const data = await res.json();
+        setError(data.message || 'Insufficient credits');
+      } else {
+        setError('Failed to generate script. Please try again.');
       }
     } catch (err) {
       console.error('Generation failed', err);
+      setError('An unexpected error occurred.');
     } finally {
       setIsGenerating(false);
     }
@@ -96,6 +104,17 @@ export function ScriptGenerator() {
             {isGenerating ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />}
             Generate Script
           </button>
+
+          {error && (
+            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex flex-col gap-2">
+              <p>{error}</p>
+              {error.includes('credits') && (
+                <a href="/dashboard/settings" className="text-brand-orange font-bold hover:underline">
+                  Buy Credits →
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

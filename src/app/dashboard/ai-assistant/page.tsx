@@ -51,6 +51,18 @@ export default function AIAssistantPage() {
         body: JSON.stringify({ prompt: input, context: "AI Assistant Chat" }),
       });
 
+      if (response.status === 403) {
+        const data = await response.json();
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `${data.message || "Insufficient credits."} Please top up your wallet in the settings.`,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error('Failed to generate response');
       }
@@ -157,7 +169,7 @@ export default function AIAssistantPage() {
             </button>
           </div>
           <p className="mt-3 text-[10px] text-zinc-500 text-center uppercase tracking-widest font-bold">
-            Uses 1 Credit per response • Powered by Gemini 3.1 Flash
+            Uses 5 Credits per response • Powered by Gemini 3.1 Flash
           </p>
         </div>
       </div>

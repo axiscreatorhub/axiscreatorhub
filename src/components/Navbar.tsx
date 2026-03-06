@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs';
+import { CreditBadge } from './CreditBadge';
 
 export function Navbar() {
   const { isSignedIn } = useUser();
@@ -27,6 +28,7 @@ export function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-4">
+        {isSignedIn && <CreditBadge />}
         {isSignedIn ? (
           <UserButton afterSignOutUrl="/" />
         ) : (

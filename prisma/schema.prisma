@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 // Models
@@ -51,6 +52,7 @@ model CreditTransaction {
   amount    Int      // Positive for credit, negative for debit
   type      String   // e.g. "PURCHASE", "USAGE", "REFUND"
   feature   String?  // e.g. "AI_WRITE", "IMAGE_GEN"
+  reference String?  @unique // Paystack transaction reference
   createdAt DateTime @default(now())
 
   wallet CreditWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)

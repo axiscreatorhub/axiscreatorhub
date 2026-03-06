@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { addCredits } from "@/lib/credits";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -12,52 +13,43 @@ export async function POST(req: NextRequest) {
 
   // Verify signature
   const hash = crypto
-    .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY || "")
+    .createHmac("sha512", process.env.PAYSTACK_WEBHOOK_SECRET || process.env.PAYSTACK_SECRET_KEY || "")
     .update(body)
     .digest("hex");
 
   if (hash !== signature) {
+    console.error("[WEBHOOK_ERROR] Invalid signature");
     return new NextResponse("Invalid signature", { status: 400 });
   }
 
   const event = JSON.parse(body);
 
   if (event.event === "charge.success") {
-    const { metadata } = event.data;
-    const userId = metadata.userId;
-    const credits = metadata.credits;
+    const { metadata, reference, status } = event.data;
+    
+    if (status !== "success") {
+      return new NextResponse("Transaction not successful", { status: 200 });
+    }
 
-    if (userId && credits) {
-      // Find the user first to get their internal ID if metadata.userId is clerkId
+    const clerkId = metadata.userId;
+    const credits = Number(metadata.credits);
+
+    if (clerkId && credits) {
       const user = await prisma.user.findUnique({
-        where: { clerkId: userId },
+        where: { clerkId },
       });
 
       if (user) {
-        // Update or create credit wallet
-        await prisma.creditWallet.upsert({
-          where: { userId: user.id },
-          update: {
-            balance: {
-              increment: Number(credits),
-            },
-          },
-          create: {
-            userId: user.id,
-            balance: Number(credits),
-          },
-        });
-
-        // Log transaction
-        await prisma.creditTransaction.create({
-          data: {
-            walletId: (await prisma.creditWallet.findUnique({ where: { userId: user.id } }))!.id,
-            amount: Number(credits),
-            type: "PURCHASE",
-          },
-        });
-
-        console.log(`Successfully added ${credits} credits to user ${userId}`);
+        try {
+          await addCredits(user.id, credits, "PURCHASE", reference);
+          console.log(`[WEBHOOK_SUCCESS] Added ${credits} credits to user ${clerkId} (Ref: ${reference})`);
+        } catch (error: any) {
+          if (error.message === "Reference already exists") {
+            console.log(`[WEBHOOK_INFO] Duplicate webhook for reference ${reference}, skipping.`);
+            return new NextResponse("OK", { status: 200 });
+          }
+          throw error;
+        }
       }
     }
   }

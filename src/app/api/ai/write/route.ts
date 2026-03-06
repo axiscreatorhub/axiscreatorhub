@@ -2,7 +2,7 @@ import { getGeminiModel } from "@/lib/gemini";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { deductCredits } from "@/lib/credits";
+import { requireCredits } from "@/lib/credits";
 
 export async function POST(req: Request) {
   try {
@@ -12,18 +12,43 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { prompt, context, type = "GENERAL" } = await req.json();
+    const { prompt, context: manualContext, type = "GENERAL" } = await req.json();
 
     if (!prompt) {
       return new NextResponse("Prompt is required", { status: 400 });
     }
 
+    // 0. Fetch Brand Context
+    const userProfile = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      include: { brandProfile: true }
+    });
+
+    if (!userProfile) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
+    const brandContext = userProfile.brandProfile 
+      ? `Brand Name: ${userProfile.brandProfile.name}, 
+         Tone: ${userProfile.brandProfile.tone}, 
+         Niche: ${userProfile.brandProfile.niche}, 
+         Audience: ${userProfile.brandProfile.audience}, 
+         Bio: ${userProfile.brandProfile.bio}`
+      : "General creative assistance";
+
     // 1. Check and deduct credits
-    const creditCost = 1; // 1 credit per AI write
+    const creditCost = 5; // 5 credits per AI write
     try {
-      await deductCredits(userId, creditCost, "AI_WRITE");
-    } catch (error) {
-      return new NextResponse("Insufficient credits", { status: 403 });
+      await requireCredits(userProfile.id, creditCost, "AI_WRITE");
+    } catch (error: any) {
+      if (error.message === "Insufficient credits") {
+        return NextResponse.json({ 
+          error: "Insufficient credits", 
+          message: "You need 5 credits to generate text. Please top up your wallet.",
+          code: "INSUFFICIENT_CREDITS"
+        }, { status: 403 });
+      }
+      return new NextResponse("Failed to verify credits", { status: 500 });
     }
 
     // 2. Call Gemini
@@ -35,10 +60,11 @@ export async function POST(req: Request) {
           parts: [
             {
               text: `You are an expert content creator assistant for Axis Creator Hub. 
-              Context: ${context || "General creative assistance"}
+              Brand Context: ${brandContext}
+              Additional Context: ${manualContext || "None"}
               Task: ${prompt}
               
-              Provide a high-quality, viral-ready response.`
+              Provide a high-quality, viral-ready response that matches the brand's tone and niche.`
             }
           ]
         }
@@ -55,7 +81,7 @@ export async function POST(req: Request) {
     // 3. Log usage in UsageLedger (for legacy tracking)
     await prisma.usageLedger.create({
       data: {
-        userId,
+        userId: userProfile.id,
         feature: "AI_WRITE",
         credits: creditCost,
         day: new Date(),
@@ -66,7 +92,7 @@ export async function POST(req: Request) {
     if (type === "SCRIPT") {
       await prisma.script.create({
         data: {
-          userId,
+          userId: userProfile.id,
           topic: prompt.substring(0, 50),
           format: "TIKTOK", // Default
           content: text || "",
