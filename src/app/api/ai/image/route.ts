@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireCredits } from "@/lib/credits";
+import { AI_COSTS } from "@/lib/costs";
 
 export async function POST(req: Request) {
   try {
@@ -27,14 +28,14 @@ export async function POST(req: Request) {
     }
 
     // 1. Check and deduct credits
-    const creditCost = 20; // 20 credits per image generation
+    const creditCost = AI_COSTS.IMAGE_GEN;
     try {
       await requireCredits(user.id, creditCost, "IMAGE_GEN");
     } catch (error: any) {
       if (error.message === "Insufficient credits") {
         return NextResponse.json({ 
           error: "Insufficient credits", 
-          message: "You need 20 credits to generate images. Please top up your wallet.",
+          message: `You need ${creditCost} credits to generate images. Please top up your wallet.`,
           code: "INSUFFICIENT_CREDITS"
         }, { status: 403 });
       }

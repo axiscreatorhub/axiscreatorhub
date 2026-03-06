@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import axios from "axios";
-
-const PACKAGES = {
-  starter: { amount: 9900, credits: 100 },
-  pro: { amount: 19900, credits: 250 },
-  studio: { amount: 49900, credits: 700 },
-};
+import { PACKAGES, PackageId } from "@/lib/packages";
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -26,7 +21,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { packageId } = body;
 
-    const selectedPackage = PACKAGES[packageId as keyof typeof PACKAGES];
+    const selectedPackage = PACKAGES[packageId as PackageId];
 
     if (!selectedPackage) {
       return NextResponse.json({ error: "Invalid package selected" }, { status: 400 });

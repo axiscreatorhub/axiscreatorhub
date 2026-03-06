@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Loader2, CheckCircle2 } from 'lucide-react';
+import { Save, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface BrandProfile {
   name: string;
@@ -21,6 +21,7 @@ export function BrandKitForm() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
@@ -39,6 +40,64 @@ export function BrandKitForm() {
     }
     fetchProfile();
   }, []);
+
+  const handleAIGenerate = async () => {
+    if (!profile.name && !profile.niche) {
+      setMessage({ type: 'error', text: 'Please enter at least a name or niche for AI to help.' });
+      return;
+    }
+
+    setIsGenerating(true);
+    setMessage(null);
+
+    try {
+      const prompt = `
+        Based on the following brand info, help me complete my brand identity:
+        Name: ${profile.name}
+        Niche: ${profile.niche}
+        
+        Please provide a professional tone, target audience description, and a compelling brand bio.
+        Response format: JSON
+        {
+          "tone": "...",
+          "audience": "...",
+          "bio": "..."
+        }
+      `;
+
+      const res = await fetch('/api/ai/write', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt,
+          type: 'GENERAL',
+          context: 'Brand Strategy'
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const jsonMatch = data.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const aiData = JSON.parse(jsonMatch[0]);
+          setProfile(prev => ({
+            ...prev,
+            tone: aiData.tone || prev.tone,
+            audience: aiData.audience || prev.audience,
+            bio: aiData.bio || prev.bio,
+          }));
+          setMessage({ type: 'success', text: 'AI has suggested a brand identity!' });
+        }
+      } else {
+        const errorData = await res.json();
+        setMessage({ type: 'error', text: errorData.message || 'AI generation failed.' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to connect to AI.' });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,8 +133,21 @@ export function BrandKitForm() {
 
   return (
     <form onSubmit={handleSave} className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-bold">Brand Details</h2>
+        <button 
+          type="button"
+          onClick={handleAIGenerate}
+          disabled={isGenerating}
+          className="flex items-center gap-2 text-xs font-bold text-brand-orange hover:opacity-80 transition-all disabled:opacity-50"
+        >
+          {isGenerating ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+          Generate with AI
+        </button>
+      </div>
+
       {message && (
-        <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-medium ${
+        <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-medium animate-in fade-in slide-in-from-top-2 ${
           message.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
         }`}>
           {message.type === 'success' && <CheckCircle2 size={18} />}
@@ -91,7 +163,7 @@ export function BrandKitForm() {
             value={profile.name}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
             placeholder="e.g. Alex Creator"
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all"
+            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-orange/50 transition-all"
           />
         </div>
         <div className="space-y-2">
@@ -101,7 +173,7 @@ export function BrandKitForm() {
             value={profile.tone}
             onChange={(e) => setProfile({ ...profile, tone: e.target.value })}
             placeholder="e.g. Energetic, Professional, Witty"
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all"
+            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-orange/50 transition-all"
           />
         </div>
         <div className="space-y-2">
@@ -111,7 +183,7 @@ export function BrandKitForm() {
             value={profile.niche}
             onChange={(e) => setProfile({ ...profile, niche: e.target.value })}
             placeholder="e.g. Tech Reviews, Fitness, Travel"
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all"
+            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-orange/50 transition-all"
           />
         </div>
         <div className="space-y-2">
@@ -121,7 +193,7 @@ export function BrandKitForm() {
             value={profile.audience}
             onChange={(e) => setProfile({ ...profile, audience: e.target.value })}
             placeholder="e.g. Gen Z Entrepreneurs, Tech Enthusiasts"
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all"
+            className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-brand-orange/50 transition-all"
           />
         </div>
       </div>
@@ -133,14 +205,14 @@ export function BrandKitForm() {
           onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
           placeholder="Tell us about your brand..."
           rows={4}
-          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all resize-none"
+          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-brand-orange/50 transition-all resize-none"
         />
       </div>
 
       <button 
         type="submit"
         disabled={isSaving}
-        className="btn-primary flex items-center gap-2 w-full md:w-auto"
+        className="w-full py-4 rounded-2xl bg-brand-orange text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-brand-orange/20"
       >
         {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
         Save Brand Identity

@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { Check, Sparkles, Zap, Rocket, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PACKAGES as PACKAGE_DATA } from '@/lib/packages';
 
-const PACKAGES = [
+const PRICING_UI = [
   {
     id: 'starter',
     name: 'Starter',
-    price: '₦9,900',
-    credits: 100,
+    price: '₦13,500',
     description: 'Perfect for new creators starting their journey.',
     features: [
       '100 AI Credits',
@@ -25,8 +25,7 @@ const PACKAGES = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '₦19,900',
-    credits: 250,
+    price: '₦28,500',
     description: 'For active creators who need more power.',
     features: [
       '250 AI Credits',
@@ -43,8 +42,7 @@ const PACKAGES = [
   {
     id: 'studio',
     name: 'Studio',
-    price: '₦49,900',
-    credits: 700,
+    price: '₦73,500',
     description: 'The ultimate toolkit for professional studios.',
     features: [
       '700 AI Credits',
@@ -98,66 +96,69 @@ export default function PricingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {PACKAGES.map((pkg) => (
-            <div 
-              key={pkg.id}
-              className={cn(
-                "relative glass p-8 rounded-[40px] border-white/5 flex flex-col transition-all hover:scale-[1.02]",
-                pkg.popular && "border-brand-purple/50 shadow-2xl shadow-brand-purple/10"
-              )}
-            >
-              {pkg.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-purple text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full">
-                  Most Popular
-                </div>
-              )}
-
-              <div className="mb-8">
-                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-6", pkg.bg, pkg.color)}>
-                  <pkg.icon size={24} />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-4xl font-black">{pkg.price}</span>
-                  <span className="text-zinc-500 text-sm font-medium">/ one-time</span>
-                </div>
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  {pkg.description}
-                </p>
-              </div>
-
-              <div className="flex-1 space-y-4 mb-10">
-                <div className="flex items-center gap-3 text-brand-orange">
-                  <Sparkles size={18} />
-                  <span className="text-sm font-bold uppercase tracking-widest">{pkg.credits} Credits Included</span>
-                </div>
-                <div className="h-px bg-white/5" />
-                {pkg.features.map((feature) => (
-                  <div key={feature} className="flex items-center gap-3 text-sm text-zinc-300">
-                    <Check size={16} className="text-emerald-500 shrink-0" />
-                    {feature}
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => handlePurchase(pkg.id)}
-                disabled={loadingId !== null}
+          {PRICING_UI.map((pkg) => {
+            const data = PACKAGE_DATA[pkg.id as keyof typeof PACKAGE_DATA];
+            return (
+              <div 
+                key={pkg.id}
                 className={cn(
-                  "w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2",
-                  pkg.popular 
-                    ? "bg-brand-purple text-white hover:opacity-90" 
-                    : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                  "relative glass p-8 rounded-[40px] border-white/5 flex flex-col transition-all hover:scale-[1.02]",
+                  pkg.popular && "border-brand-purple/50 shadow-2xl shadow-brand-purple/10"
                 )}
               >
-                {loadingId === pkg.id ? (
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>Get Started with {pkg.name}</>
+                {pkg.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-purple text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full">
+                    Most Popular
+                  </div>
                 )}
-              </button>
-            </div>
-          ))}
+
+                <div className="mb-8">
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-6", pkg.bg, pkg.color)}>
+                    <pkg.icon size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-4xl font-black">{pkg.price}</span>
+                    <span className="text-zinc-500 text-sm font-medium">/ one-time</span>
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">
+                    {pkg.description}
+                  </p>
+                </div>
+
+                <div className="flex-1 space-y-4 mb-10">
+                  <div className="flex items-center gap-3 text-brand-orange">
+                    <Sparkles size={18} />
+                    <span className="text-sm font-bold uppercase tracking-widest">{data.credits} Credits Included</span>
+                  </div>
+                  <div className="h-px bg-white/5" />
+                  {pkg.features.map((feature) => (
+                    <div key={feature} className="flex items-center gap-3 text-sm text-zinc-300">
+                      <Check size={16} className="text-emerald-500 shrink-0" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handlePurchase(pkg.id)}
+                  disabled={loadingId !== null}
+                  className={cn(
+                    "w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2",
+                    pkg.popular 
+                      ? "bg-brand-purple text-white hover:opacity-90" 
+                      : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                  )}
+                >
+                  {loadingId === pkg.id ? (
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>Get Started with {pkg.name}</>
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <div className="text-center">

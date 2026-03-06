@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireCredits } from "@/lib/credits";
 
+import { AI_COSTS } from "@/lib/costs";
+
 export async function POST(req: Request) {
   try {
     const ai = getGeminiModel();
@@ -37,14 +39,14 @@ export async function POST(req: Request) {
       : "General creative assistance";
 
     // 1. Check and deduct credits
-    const creditCost = 5; // 5 credits per AI write
+    const creditCost = manualContext === 'Video Creator' ? AI_COSTS.VIDEO_SCRIPT : AI_COSTS.WRITING;
     try {
       await requireCredits(userProfile.id, creditCost, "AI_WRITE");
     } catch (error: any) {
       if (error.message === "Insufficient credits") {
         return NextResponse.json({ 
           error: "Insufficient credits", 
-          message: "You need 5 credits to generate text. Please top up your wallet.",
+          message: `You need ${creditCost} credits to generate this content. Please top up your wallet.`,
           code: "INSUFFICIENT_CREDITS"
         }, { status: 403 });
       }

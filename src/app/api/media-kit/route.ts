@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const { userId: clerkId } = await auth();
     if (!clerkId) return new NextResponse("Unauthorized", { status: 401 });
 
-    const { slug, isPublic, theme, links, stats } = await req.json();
+    const { slug, isPublic, theme, links, stats, pitch } = await req.json();
 
     const user = await prisma.user.findUnique({
       where: { clerkId },
@@ -45,13 +45,14 @@ export async function POST(req: Request) {
       return new NextResponse("Brand profile required first", { status: 400 });
     }
 
-    // Update Brand Profile (slug, links, stats)
+    // Update Brand Profile (slug, links, stats, pitch)
     const updatedProfile = await prisma.brandProfile.update({
       where: { id: user.brandProfile.id },
       data: {
         slug: slug?.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
         links: JSON.stringify(links || []),
         stats: JSON.stringify(stats || {}),
+        pitch: pitch || "",
       },
     });
 

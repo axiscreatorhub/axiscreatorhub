@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { addCredits } from "@/lib/credits";
+import { PACKAGES, PackageId } from "@/lib/packages";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -32,7 +33,16 @@ export async function POST(req: NextRequest) {
     }
 
     const clerkId = metadata.userId;
-    const credits = Number(metadata.credits);
+    const packageId = metadata.packageId as PackageId;
+    
+    // Verify credits against server-side package definition
+    const selectedPackage = PACKAGES[packageId];
+    if (!selectedPackage) {
+      console.error("[WEBHOOK_ERROR] Invalid packageId in metadata");
+      return new NextResponse("Invalid package", { status: 400 });
+    }
+
+    const credits = selectedPackage.credits;
 
     if (clerkId && credits) {
       const user = await prisma.user.findUnique({

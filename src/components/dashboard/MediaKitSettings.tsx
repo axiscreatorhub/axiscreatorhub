@@ -1,16 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Loader2, Globe, Lock, ExternalLink, Palette, Share2 } from 'lucide-react';
+import { Save, Loader2, Globe, Lock, ExternalLink, Palette, Share2, Sparkles, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function MediaKitSettings() {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
   const [slug, setSlug] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [theme, setTheme] = useState('MODERN');
+  const [pitch, setPitch] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -22,6 +24,7 @@ export function MediaKitSettings() {
           setSlug(json.profile.slug || '');
           setIsPublic(json.mediaKit?.isPublic || false);
           setTheme(json.mediaKit?.theme || 'MODERN');
+          setPitch(json.profile.pitch || '');
         }
       } catch (err) {
         console.error(err);
@@ -32,13 +35,48 @@ export function MediaKitSettings() {
     fetchData();
   }, []);
 
+  const handleGeneratePitch = async () => {
+    if (!data?.profile) return;
+    setIsGeneratingPitch(true);
+    try {
+      const prompt = `
+        Create a professional brand pitch for a creator media kit.
+        Brand Name: ${data.profile.name}
+        Niche: ${data.profile.niche}
+        Audience: ${data.profile.audience}
+        Bio: ${data.profile.bio}
+        
+        The pitch should be concise, persuasive, and highlight why brands should collaborate with this creator.
+      `;
+
+      const res = await fetch('/api/ai/write', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt,
+          type: 'GENERAL',
+          context: 'Brand Pitch'
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        setPitch(json.text);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsGeneratingPitch(false);
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
       const res = await fetch('/api/media-kit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, isPublic, theme }),
+        body: JSON.stringify({ slug, isPublic, theme, pitch }),
       });
       if (res.ok) {
         const json = await res.json();
@@ -98,6 +136,31 @@ export function MediaKitSettings() {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Pitch Section */}
+          <div className="glass p-8 rounded-[32px] border-brand-purple/10 space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <FileText className="text-brand-purple" size={20} />
+                Brand Pitch
+              </h3>
+              <button 
+                onClick={handleGeneratePitch}
+                disabled={isGeneratingPitch}
+                className="flex items-center gap-2 text-xs font-bold text-brand-purple hover:opacity-80 transition-all disabled:opacity-50"
+              >
+                {isGeneratingPitch ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                Generate with AI
+              </button>
+            </div>
+            <textarea 
+              value={pitch}
+              onChange={(e) => setPitch(e.target.value)}
+              placeholder="Your professional brand pitch..."
+              rows={6}
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-brand-purple/50 transition-all resize-none"
+            />
           </div>
 
           {/* Theme Section */}
